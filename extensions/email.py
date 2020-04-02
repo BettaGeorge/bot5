@@ -11,7 +11,7 @@ from email.mime.text import MIMEText
 
 class Email:
     def __init__(self):
-		pass
+        pass
 
     # WARNING: while I have managed to allow unicode characters (such as äöüß) in the message body, unicode in the subject line or sender or receiver might still cause problems.
     def send(self, to: str, subject: str, msg: str):

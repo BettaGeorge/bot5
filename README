@@ -1,1 +1,10 @@
-bot5
+To configure the bot, create a file named .env in any directory above the
+bot5.py file (e.g. in your home directory is fine) containing the following
+lines.
+
+
+BOT_CONFIG=/path/to/config/directory
+DISCORD_TOKEN="my_cool_token"
+DISCORD_GUILD="name of my guild"
+BOT_EMAIL="me@somewhere.net"
+BOT_EMAIL_PASSWORD="password to the smtp server"

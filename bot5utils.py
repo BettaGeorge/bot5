@@ -19,7 +19,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 MY_ADDRESS = os.getenv('BOT_EMAIL')
 PASSWORD = os.getenv('BOT_EMAIL_PASSWORD')
-GUILDNAME = TOKEN = os.getenv('DISCORD_GUILD')
+GUILDNAME = os.getenv('DISCORD_GUILD')
 GUILD = None
 
 # this shall reference the unique instance of the class ExtensionVariables from the extensionmanager extension.
