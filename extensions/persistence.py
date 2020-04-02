@@ -7,8 +7,6 @@ from bot5utils import ext as b5
 
 import pickle
 import os
-from dotenv import load_dotenv
-load_dotenv()
 
 
 class Persist:
@@ -17,11 +15,11 @@ class Persist:
 
     # pass a filename and a reference to a pickleable object
     def save(self,filename:str,obj):
-        with open(os.getenv('BOT_CONFIG')+"/"+filename,'wb') as savefile:
+        with open(b5path+"/"+filename,'wb') as savefile:
             pickle.dump(obj,savefile)
 
     def load(self,filename:str):
-            with open(os.getenv('BOT_CONFIG')+"/"+filename,"rb") as savefile:
+            with open(b5path+"/"+filename,"rb") as savefile:
                 return pickle.load(savefile)
 
 

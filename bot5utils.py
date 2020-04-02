@@ -11,7 +11,6 @@ from discord.ext import commands
 from discord.ext.commands import Greedy
 import logging
 import os
-from dotenv import load_dotenv
 import configparser # easy way to parse the config files which you can use to customize the bot
 import sys # to parse command line arguments
 import getpass.getpass # exactly what it says on the tin: a prompt that does not display the typed characters
