@@ -5,7 +5,6 @@
 # * global variables
 # * custom exception classes
 # * custom checks for the discord.command framework
-# note: global variables HAVE TO BE referenced as bot5utils.VAR in order to work in files that import this one. I suggest importing bot5utils as b5 to shorten notation.
 
 import discord
 from discord.ext import commands
@@ -13,7 +12,15 @@ from discord.ext.commands import Greedy
 import logging
 import os
 from dotenv import load_dotenv
+import configparser # easy way to parse the config files which you can use to customize the bot
+import sys # to parse command line arguments
+
+
 logging.basicConfig(level=logging.INFO)
+
+confpath = os.getenv('HOME')+"/.bot5"
+if len(sys.argv) > 1: # first argument is the name of the current script
+    confpath = sys.argv[1]
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
