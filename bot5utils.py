@@ -13,7 +13,7 @@ import logging
 import os
 import configparser # easy way to parse the config files which you can use to customize the bot
 import sys # to parse command line arguments
-import getpass.getpass # exactly what it says on the tin: a prompt that does not display the typed characters
+from getpass import getpass # exactly what it says on the tin: a prompt that does not display the typed characters
 
 
 logging.basicConfig(level=logging.INFO)
