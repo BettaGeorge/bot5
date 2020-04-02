@@ -2,6 +2,7 @@
 # bot5.py
 # the main executable to start Bot5.
 # call python3 bot5.py to bring it online.
+# accepts one optional argument: the path to the config folder. If none is provided, a sensible default is used.
 # There should be nothing in here except the bare minimum. Everything else should be loaded through extensions.
 # These extensions in turn should be loaded by the ExtensionManager.
 
@@ -15,8 +16,9 @@ import traceback
 client = commands.Bot(command_prefix=commands.when_mentioned_or('\\'))
 
 
-# WARNING: this is NOT GUARANTEED TO BE ONLY CALLED ONCE! I have not handled that yet.
+# WARNING: this is NOT GUARANTEED TO BE ONLY CALLED ONCE!
 # my fix for now: see whether extension manager is loaded. If yes, we must have been here before.
+# edit a few days later: fix seems to be working.
 @client.event
 async def on_ready():
 

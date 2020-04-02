@@ -14,19 +14,60 @@ import os
 from dotenv import load_dotenv
 import configparser # easy way to parse the config files which you can use to customize the bot
 import sys # to parse command line arguments
+import getpass.getpass # exactly what it says on the tin: a prompt that does not display the typed characters
 
 
 logging.basicConfig(level=logging.INFO)
 
 confpath = os.getenv('HOME')+"/.bot5"
+conffile = confpath+"/config"
+conffilesecret = confpath+"/private.config"
+
 if len(sys.argv) > 1: # first argument is the name of the current script
     confpath = sys.argv[1]
 
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-MY_ADDRESS = os.getenv('BOT_EMAIL')
-PASSWORD = os.getenv('BOT_EMAIL_PASSWORD')
-GUILDNAME = os.getenv('DISCORD_GUILD')
+# first, see whether there is a config directory
+if not os.path.isdir(confpath) or not os.path.isfile(conffile):
+    print("No config file at "+conffile+". Either this is the first time you started your bot, or you misspelled your config path.")
+    try:
+        inp = input("Create a new configuration file in "+confpath+" [y/N]?")
+    except:
+        print("aborting.")
+        raise SystemExit
+    if inp != "y":
+        print("aborting.")
+        raise SystemExit
+    else:
+        os.path.isdir(confpath) or os.makedirs(confpath) # os.mkdir would make a dir, but os.makedirs also creates subfolders if necessary
+        newconf = configparser.ConfigParser()
+        secretconf = configparser.ConfigParser()
+        print("Creating config files. If you do not want to set a value right now, simply hit enter and later edit "+conffile+" and "+conffilesecret+" by hand.")
+        secretconf['discord'] = {}
+        secretconf['discord']['bot token'] = input("Discord bot token: ")
+        newconf['guild'] = {}
+        newconf['guild']['name'] = input("Name of your discord server: ")
+        newconf['email'] = {}
+        newconf['email']['from'] = input("E-Mail address from which the bot should send: ")
+        newconf['email']['smtp user'] = input("User name for SMTP: ")
+        secretconf['email'] = {}
+        secretconf['email']['smtp pass'] = getpass("SMTP password: ")
+
+        with open(conffile,'w') as FILE:
+            newconf.write(FILE)
+        with open(conffilesecret,'w') as FILE:
+            secretconf.write(FILE)
+
+# by this point, we should have a valid config path. Hence it is time to load the values thence.
+b5config = configparser.ConfigParser(allow_no_value = True) # allow_no_value allows us to simply list e.g. extension names as options
+b5secret = configparser.ConfigParser()
+
+# these three variables will be used in the other modules as well, so give them easily recognizable names
+b5config.read(conffile)
+b5secret.read(conffilesecret)
+b5path = confpath
+
+TOKEN = b5secret.get('discord','bot token',fallback='')
+GUILDNAME = b5config.get('discord','guild',fallback='')
 GUILD = None
 
 # this shall reference the unique instance of the class ExtensionVariables from the extensionmanager extension.
