@@ -11,10 +11,15 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Greedy
 import logging
+import os
+from dotenv import load_dotenv
 logging.basicConfig(level=logging.INFO)
 
-TOKEN = "NjkwNTg2OTI4OTYxMTU5MjA4.XnTpaw.NnPjdJyd_ta0wxoKtO5ot2MyfH4"
-GUILDNAME = "5. Stock"
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
+MY_ADDRESS = os.getenv('BOT_EMAIL')
+PASSWORD = os.getenv('BOT_EMAIL_PASSWORD')
+GUILDNAME = TOKEN = os.getenv('DISCORD_GUILD')
 GUILD = None
 
 # this shall reference the unique instance of the class ExtensionVariables from the extensionmanager extension.

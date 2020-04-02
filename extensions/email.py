@@ -11,15 +11,15 @@ from email.mime.text import MIMEText
 
 class Email:
     def __init__(self):
-        pass
+		pass
 
     # WARNING: while I have managed to allow unicode characters (such as äöüß) in the message body, unicode in the subject line or sender or receiver might still cause problems.
     def send(self, to: str, subject: str, msg: str):
         port = 465
         smtp_server='smtp.uni-kl.de'
-        sender_user = "rettich@rhrk.uni-kl.de"
+        sender_user = MY_ADDRESS
         sender_email = "fs.leo@mathematik.uni-kl.de"
-        password = "foo" # TODO: load via dotenv
+        password = PASSWORD
         mailcontext = ssl.create_default_context()
 
         messagecontent = MIMEText(msg.encode('utf-8'),_charset='utf-8')
