@@ -299,11 +299,11 @@ class UserClass:
         return await self.verify(0,True)
 
     async def erstiVerify(self, wort: str):
-        self.set("erstiVerifyAttempts", self.getErstiVerifyAttempts()+1)
+        self.__set("erstiVerifyAttempts", self.getErstiVerifyAttempts()+1)
         match = re_ersti.match(wort)
         if match is None:
             return False
-        self.set("semester",1)
+        self.__set("semester",1)
         newrole = discord.utils.get(GUILD.roles,name="Ersti")
         await self.inGuild().add_roles(newrole)
         await self.verify(0,force=True,accountType=Account.ERSTI)
