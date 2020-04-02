@@ -205,9 +205,9 @@ class LeoCog(commands.Cog,name="LeoScript"):
             if not re_command.match(message.content):
                 if len(message.attachments) > 0:
                     await message.channel.send("Ich versuche dein Skript auszuführen.")
-                    await message.attachments[0].save('scripts/'+str(message.author.id))
+                    await message.attachments[0].save(os.gentenv('BOT_CONFIG')+'/scripts/'+str(message.author.id))
                     code = ""
-                    with open('scripts/'+str(message.author.id),'r') as scr:
+                    with open(os.getenv('BOT_CONFIG')+'/scripts/'+str(message.author.id),'r') as scr:
                         code = scr.read()
                     interpreter = LeoInterpreter(code, message.channel, b5("user").get(message.author.id))
                     try:
