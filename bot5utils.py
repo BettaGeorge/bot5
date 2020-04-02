@@ -43,8 +43,8 @@ if not os.path.isdir(confpath) or not os.path.isfile(conffile):
         print("Creating config files. If you do not want to set a value right now, simply hit enter and later edit "+conffile+" and "+conffilesecret+" by hand.")
         secretconf['discord'] = {}
         secretconf['discord']['bot token'] = input("Discord bot token: ")
-        newconf['guild'] = {}
-        newconf['guild']['name'] = input("Name of your discord server: ")
+        newconf['discord'] = {}
+        newconf['discord']['guild'] = input("Name of your discord server: ")
         newconf['email'] = {}
         newconf['email']['from'] = input("E-Mail address from which the bot should send: ")
         newconf['email']['smtp user'] = input("User name for SMTP: ")
