@@ -222,7 +222,7 @@ class ExtensionManager(commands.Cog):
     def unloadExtension(self, extension: str, recursive = False) -> List[str]:
         if not extension in self.extensions:
             raise ExtensionNotLoadedError
-        if not recursive or self.neededBy[extension] == []:
+        if not recursive and self.neededBy[extension] != []:
             raise ExtensionError('cannot unload '+extension+' because it is needed by '+str(self.neededBy[extension]))
 
         unloaded = []
