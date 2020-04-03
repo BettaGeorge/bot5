@@ -235,7 +235,7 @@ class ExtensionManager(commands.Cog):
 
         self.neededBy.pop(extension)
         self.dependsOn.pop(extension)
-        for extlist in self.neededBy.values:
+        for extlist in self.neededBy.values():
             if extension in extlist:
                 extlist.remove(extension)
         self.extensions.remove(extension)
