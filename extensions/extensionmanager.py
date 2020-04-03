@@ -213,7 +213,7 @@ class ExtensionManager(commands.Cog):
 
     # if recursive is set to True, also unload everything that depends on this.
     # returns a list of all unloaded extensions.
-    def unloadExtension(self, extension: str, recursive: Bool = False) -> List[str]:
+    def unloadExtension(self, extension: str, recursive = False) -> List[str]:
         if not extension in self.extensions:
             raise ExtensionNotLoadedError
         if not recursive or self.neededBy[extension] == []:
