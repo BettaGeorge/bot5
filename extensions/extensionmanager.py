@@ -80,8 +80,8 @@ class ExtensionManager(commands.Cog):
         if 'extensions' in b5config.sections():
             for extension in b5config['extensions']:
                 if extension not in self.extensions:
-                    msg = self.loadExtension(extension)
-                    await b5('log').log(msg)
+                    self.loadExtension(extension)
+                    await b5('log').log("Loaded extension "+extension+".")
 
         # add a global check for verified users:
         #self.bot.add_check(b5check('user',check='verified'))
@@ -102,8 +102,8 @@ class ExtensionManager(commands.Cog):
         print("EXTENSION MANAGER: shutting down")
         self.verifyCheck is not None and self.bot.remove_check(self.verifyCheck)
         for extension in reversed(self.extensions):
-            msg = self.unloadExtension(extension)
-            await b5('log').log(msg)
+            unloaded = self.unloadExtension(extension)
+            await b5('log').log("Unloaded extensions: "+str(unloaded))
         print(self.unloadExtension("logging"))
         print("EXTENSION MANAGER: all extensions removed.")
 
