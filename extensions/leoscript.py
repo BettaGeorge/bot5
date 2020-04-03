@@ -1,3 +1,5 @@
+# BOT5 EXTENSION
+# DEPENDS: user, persistence
 # leoscript.py
 # oh God, why am I doing this even
 

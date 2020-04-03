@@ -1,3 +1,5 @@
+# BOT5 EXTENSION
+# DEPENDS: user
 # komraum.py
 # extension to manage the KOM room e.g. during board games night or breakfast.
 

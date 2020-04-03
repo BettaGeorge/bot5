@@ -1,3 +1,5 @@
+# BOT5 EXTENSION
+# DEPENDS: persistence, user
 # whiteboard.py
 # this is an extension to Bot5 containing the Whiteboard cog. It should hold all commands that do something with the whiteboard.
 
