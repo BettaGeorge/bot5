@@ -176,7 +176,7 @@ class ExtensionManager(commands.Cog):
 
         toLoad = []
         for d in depends:
-            d in self.extensions and continue # dependency already loaded: great!
+            (d in self.extensions) and continue # dependency already loaded: great!
             if d in pendingExtensions:
                 raise CircularDependencyError(d+' depends on '+extension+', which in turn depends on '+d+'. Do you see the problem here?')
             ret = self.loadExtension(d,(pendingExtensions+[extension],tmpNeededBy,tmpDependsOn))
