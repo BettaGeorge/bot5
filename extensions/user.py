@@ -47,7 +47,7 @@ class UserCog(commands.Cog,name="User",command_attrs=dict(hidden=True)):
         known = [u.getID() for u in b5("user").list()]
         for m in b5('ext').guild().members:
             if m.id not in known:
-                await ctx.send(str(m)+", roles: "+str(discord.utils.get(b5('ext').guild().id=m.id).roles))
+                await ctx.send(str(m)+", roles: "+str(discord.utils.get(b5('ext').guild().members,id=m.id).roles))
 
     @userlist.command(name="slipped",brief="Zeige die Benutzer, die zwar verifiziert sind, aber nicht in der Datenbank.")
     @b5check("user",check="admin")
