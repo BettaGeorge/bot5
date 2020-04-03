@@ -18,9 +18,9 @@ class Email:
     def send(self, to: str, subject: str, msg: str):
         port = 465
         smtp_server='smtp.uni-kl.de'
-        sender_user = b5config['email','smtp user']
-        sender_email = b5config['email','from']
-        password = b5secret['email','smtp pass']
+        sender_user = b5config['email']['smtp user']
+        sender_email = b5config['email']['from']
+        password = b5secret['email']['smtp pass']
         mailcontext = ssl.create_default_context()
 
         messagecontent = MIMEText(msg.encode('utf-8'),_charset='utf-8')
