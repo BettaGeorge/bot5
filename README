@@ -1,10 +1,70 @@
-To configure the bot, create a file named .env in any directory above the
-bot5.py file (e.g. in your home directory is fine) containing the following
-lines.
+To start up the bot, switch into this directory and run
+python3 bot5.py /path/to/config
+with the path to a (possibly not yet existing) folder where you would like
+Bot5 to create its config and save files. You may omit this, in which case
+Bot5 defaults to creating ~/.bot5.
+On first startup (or if the config got deleted somehow), Bot5 will ask you to
+create a minimal config file.
 
 
-BOT_CONFIG=/path/to/config/directory
-DISCORD_TOKEN="my_cool_token"
-DISCORD_GUILD="name of my guild"
-BOT_EMAIL="me@somewhere.net"
-BOT_EMAIL_PASSWORD="password to the smtp server"
+CONFIGURATION
+
+There are two configuration files:
+"config" contains pretty much everything you can configure, including
+extensions.
+"private.config" contains all information like passwords and authentication
+tokens. This is so you can safely share your config file without redacting it
+first.
+
+Config files are formatted as INI files [1]. A line starting with a # is a
+comment.
+It is advisable not to use the character $ in values as this may become a
+reserved character in future versions. Any other character is fair game.
+
+
+Your config file should contain at least the following information.
+
+[discord]
+guild = name of your server
+
+[email]
+from = sender@somewhere.net
+smtp user = sender@somewhere.net
+
+
+Your secret.config should contain the following.
+
+[discord]
+bot token = TOKEN
+
+[email]
+smtp pass = my super secure password!!!!1one
+# you may of course simply set
+# smtp pass = 
+# if you do not plan on ever sending emails.
+
+
+Any further configuration is extension-specific and thus documented in the
+pertinent extension files.
+
+
+EXTENSIONS
+
+All extensions should be collected in the extensions folder.
+There are two extensions which you may not delete, namely the files logging.py
+and extensionmanager.py. Anything else you can delete with no ramifications.
+
+logging and extensionmanager are always loaded. The extension manager then
+looks at your main config file for a section called [extensions] and tries to
+load every extension therein (just list one extension name, without the .py
+ending, per line). Note that you have no control over the order in which
+extensions are loaded. If your extension depends on other bot5 extensions, it
+should instead set a proper dependency string in its code.
+
+Note that you do not need to load dependencies manually. If you load an
+extension that depends on another extension, the latter one is loaded
+automatically. If the extension is not found, startup will fail with a
+DependencyError.
+
+
+[1] https://en.wikipedia.org/wiki/INI_file

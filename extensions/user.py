@@ -1,3 +1,5 @@
+# BOT5 EXTENSION
+# DEPENDS: persistence
 # user.py
 # extension for user management
 

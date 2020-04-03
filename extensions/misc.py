@@ -1,3 +1,4 @@
+# BOT5 EXTENSION
 # misc.py
 # extension containing everything for which I had no better place
 
