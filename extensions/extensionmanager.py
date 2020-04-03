@@ -211,6 +211,8 @@ class ExtensionManager(commands.Cog):
             self.extensions = self.extensions + toLoad
             self.dependsOn = tmpDependsOn
             self.neededBy = tmpNeededBy
+            extension in self.dependsOn or self.dependsOn[extension] = []
+            extension in self.neededBy or self.neededBy[extension] = []
             return None
 
     # if recursive is set to True, also unload everything that depends on this.
