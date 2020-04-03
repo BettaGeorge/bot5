@@ -102,8 +102,9 @@ class ExtensionManager(commands.Cog):
         print("EXTENSION MANAGER: shutting down")
         self.verifyCheck is not None and self.bot.remove_check(self.verifyCheck)
         for extension in reversed(self.extensions):
-            unloaded = self.unloadExtension(extension)
-            await b5('log').log("Unloaded extensions: "+str(unloaded))
+            if extension in self.extensions:
+                unloaded = self.unloadExtension(extension)
+                await b5('log').log("Unloaded extensions: "+str(unloaded))
         print(self.unloadExtension("logging"))
         print("EXTENSION MANAGER: all extensions removed.")
 
