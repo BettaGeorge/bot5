@@ -25,7 +25,7 @@ class Word:
 class Whiteboard(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
-        self.channel = discord.utils.get(bot5utils.GUILD.text_channels,name="whiteboard")
+        self.channel = discord.utils.get(b5('ext').guild().text_channels,name="whiteboard")
 
         # list of words indexed by YYYYMMDD.
         self.words = {}

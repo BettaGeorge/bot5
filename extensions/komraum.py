@@ -23,16 +23,16 @@ class KOMRaum(commands.Cog,name="KOM-Raum"):
         if isinstance(category,discord.CategoryChannel):
             cat = category
         else:
-            cat = discord.utils.get(bot5utils.GUILD.categories,name=category)
+            cat = discord.utils.get(bot5utils.b5('ext').guild().categories,name=category)
             if cat is None:
                 raise Bot5Error("Kategorie "+str(category)+" finde ich nicht.")
 
         if role is None:
-            rl = bot5utils.GUILD.roles[0]
+            rl = bot5utils.b5('ext').guild().roles[0]
         elif isinstance(role,discord.Role):
             rl = role
         else:
-            rl = discord.utils.get(GUILD.roles,name="role")
+            rl = discord.utils.get(b5('ext').guild().roles,name="role")
             if rl is None:
                 raise Bot5Error("Die Rolle "+str(role)+" kenne ich nicht.")
 
@@ -61,7 +61,7 @@ class KOMRaum(commands.Cog,name="KOM-Raum"):
     @b5check('user',role=["Spieleabend","Vorsitz","FSR"])
     async def kompush(self,ctx,*,arg=None):
         try:
-            await self.changeChannelPerms("KOM-Raum",arg,GUILD.roles[0],use_voice_activation=False)
+            await self.changeChannelPerms("KOM-Raum",arg,b5('ext').guild().roles[0],use_voice_activation=False)
         except Bot5Error as e:
             await ctx.send("Konnte Berechtigungen nicht ändern!\n"+str(e))
         else:
@@ -72,7 +72,7 @@ class KOMRaum(commands.Cog,name="KOM-Raum"):
     @b5check('user',role=["Spieleabend","Vorsitz","FSR"])
     async def komnopush(self,ctx,*,arg=None):
         try: 
-            await self.changeChannelPerms("KOM-Raum",arg,GUILD.roles[0],use_voice_activation=True)
+            await self.changeChannelPerms("KOM-Raum",arg,b5('ext').guild().roles[0],use_voice_activation=True)
         except Bot5Error as e:
             await ctx.send("Konnte Berechtigungen nicht ändern!\n"+str(e))
         else:

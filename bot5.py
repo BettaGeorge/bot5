@@ -30,8 +30,9 @@ async def on_ready():
         return
 
     # see whether we are in the 5.Stock server. If not, give up.
-    bot5utils.GUILD = discord.utils.get(client.guilds,name=bot5utils.GUILDNAME)
-    if bot5utils.GUILD is None:
+    #bot5utils.GUILD = discord.utils.get(client.guilds,name=bot5utils.GUILDNAME)
+    guild = discord.utils.get(client.guilds,name=bot5utils.GUILDNAME)
+    if guild is None:
         raise Bot5Error("guild not found")
         await client.logout()
 

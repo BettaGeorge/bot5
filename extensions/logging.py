@@ -11,7 +11,7 @@ import bot5utils
 class Essential(commands.Cog,command_attrs=dict(hidden=True)):
     def __init__(self,bot):
         self.bot = bot
-        self.syschannel = discord.utils.get(bot5utils.GUILD.text_channels,name="leo")
+        self.syschannel = discord.utils.get(discord.utils.get(client.guilds,name=bot5utils.GUILDNAME).text_channels,name="leo")
 
 
     async def debug(self,msg):
