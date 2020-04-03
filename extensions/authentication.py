@@ -4,6 +4,8 @@
 # extension with the Authentication cog.
 # contains commands for the registration on the 5th floor.
 
+# TODO: don't allow more than three guesses
+
 
 from discord.ext import commands
 
