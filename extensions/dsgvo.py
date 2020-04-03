@@ -66,7 +66,12 @@ Solltest du irgendwelche Fragen zum Datenschutz haben, kannst du an die E-Mail-A
                 await b5("log").log("removed a user")
                 await bot5utils.GUILD.kick(u,reason="Du hast die Löschung deiner Daten beantragt. Mach es gut!")
                 b5("user").remove(ctx.author.id)
-                await b5("log").log(b5("ext").reloadExtension("user"))
+                try:
+                    b5("ext").reloadExtension("user")
+                except Exception as e:
+                    await b5('log').log("Error reloading user extension!\n"+str(e))
+                else:
+                    await b5('log').log("Reloaded extension user.")
             else:
                 await ctx.send("Ich habe den Löschvorgang abgebrochen.")
                 
