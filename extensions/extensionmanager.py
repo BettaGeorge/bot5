@@ -248,7 +248,7 @@ class ExtensionManager(commands.Cog):
     def reloadExtension(self,extension):
         unloaded = self.unloadExtension(extension,recursive=True)
 
-        for ext in unloaded:
+        for ext in reversed(unloaded):
             self.loadExtension(ext)
 
 
