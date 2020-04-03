@@ -105,7 +105,7 @@ class ExtensionManager(commands.Cog):
             if extension in self.extensions:
                 unloaded = self.unloadExtension(extension)
                 await b5('log').log("Unloaded extensions: "+str(unloaded))
-        self.bot.unload_extension("logging")
+        self.bot.unload_extension("extensions.logging")
         print("EXTENSION MANAGER: all extensions removed.")
 
     def registerSelf(self):
