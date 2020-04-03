@@ -1,3 +1,5 @@
+# BOT5 EXTENSION
+# DEPENDS: user
 # dsgvo.py
 # extension for datenschutz.
 

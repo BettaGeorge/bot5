@@ -1,3 +1,4 @@
+# BOT5 EXTENSION
 # email.py
 # extension to enable sending emails to people
 # TODO: my pw shouldn't be in here in plaintext ...

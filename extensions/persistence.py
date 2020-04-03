@@ -1,3 +1,4 @@
+# BOT5 EXTENSION
 # persistence.py
 # extension to manage everything Bot5 needs for persistence, i.e. saving and loading files.
 

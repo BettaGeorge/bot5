@@ -1,3 +1,5 @@
+# BOT5 EXTENSION
+# DEPENDS: user, email
 # authentication.py
 # extension with the Authentication cog.
 # contains commands for the registration on the 5th floor.

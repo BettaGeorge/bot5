@@ -1,3 +1,5 @@
+# BOT5 EXTENSION
+# DEPENDS: user
 # admin.py
 # this is an extension to Bot5 containing the Admin cog. It should hold all commands that regular users are not allowed to run, but admins are.
 
