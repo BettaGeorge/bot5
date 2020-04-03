@@ -152,7 +152,8 @@ class ExtensionManager(commands.Cog):
 
         # first, see whether this extension exists and is a proper bot5 extension.
         with open("extensions/"+extension+".py","r") as FILE:
-            FILE.readline().strip() == FIRSTLINE or raise ExtensionError('first line of '+extension+' was not '+FIRSTLINE+'; is this really a bot5 extension?')
+            if FILE.readline().strip() != FIRSTLINE:
+                raise ExtensionError('first line of '+extension+' was not '+FIRSTLINE+'; is this really a bot5 extension?')
             secondLine = FILE.readline().strip()
 
         if pending is None:
