@@ -84,6 +84,13 @@ class UserCog(commands.Cog,name="User",command_attrs=dict(hidden=True)):
             b5("user").add(m.id)
             await ctx.send("Ich kenne jetzt "+m.display_name+".")
 
+    @user.command(name="forget",brief="Benutzer aus der Datenbank entfernen.")
+    @b5check("user",check="admin")
+    async def userforget(self,ctx,members:Greedy[discord.Member]):
+        for m in members:
+            b5("user").remove(m.id)
+            await ctx.send("Ich habe "+m.display_name+" vergessen.")
+
     @user.command(name="set",brief="Ein Attribut des Benutzers setzen")
     @b5check("user",check="admin")
     async def userset(self,ctx, mem: discord.Member, attribute: str, value):
