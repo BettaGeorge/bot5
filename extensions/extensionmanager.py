@@ -172,6 +172,7 @@ class ExtensionManager(commands.Cog):
 
         tmpDependsOn[extension] = depends
         for d in depends:
+            d in tmpNeededBy or tmpNeededBy[d] = []
             tmpNeededBy[d].append(extension)
 
         toLoad = []
