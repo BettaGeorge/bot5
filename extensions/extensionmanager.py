@@ -214,8 +214,10 @@ class ExtensionManager(commands.Cog):
     # if recursive is set to True, also unload everything that depends on this.
     # returns a list of all unloaded extensions.
     def unloadExtension(self, extension: str, recursive: Bool = False) -> List[str]:
-        extension in self.extensions or raise ExtensionNotLoadedError
-        recursive or self.neededBy[extension] == [] or raise ExtensionError('cannot unload '+extension+' because it is needed by '+str(self.neededBy[extension]))
+        if not extension in self.extensions:
+            raise ExtensionNotLoadedError
+        if not recursive or self.neededBy[extension] == []:
+            raise ExtensionError('cannot unload '+extension+' because it is needed by '+str(self.neededBy[extension]))
 
         unloaded = []
         if recursive:
