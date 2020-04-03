@@ -64,7 +64,7 @@ Solltest du irgendwelche Fragen zum Datenschutz haben, kannst du an die E-Mail-A
                 await ctx.send("Mach es gut!")
                 u = b5("user").get(ctx.author.id).inGuild()
                 await b5("log").log("removed a user")
-                await bot5utils.b5('ext').guild().kick(u,reason="Du hast die Löschung deiner Daten beantragt. Mach es gut!")
+                await b5('ext').guild().kick(u,reason="Du hast die Löschung deiner Daten beantragt. Mach es gut!")
                 b5("user").remove(ctx.author.id)
                 try:
                     b5("ext").reloadExtension("user")
