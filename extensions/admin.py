@@ -48,12 +48,22 @@ class System(commands.Cog,command_attrs=dict(hidden=True)):
     @extension.command(name="load", brief="Ein neues Plugin laden.")
     @b5check("user",check="admin")
     async def b5load(self,ctx,ext):
-        await b5('log').log(b5('ext').loadExtension(ext))
+        try:
+            b5('ext').loadExtension(ext)
+        except Exception as e:
+            await b5('log').log("load "+ext+": exception\n"+str(e))
+        else:
+            await b5('log').log("load "+ext+": success")
 
     @extension.command(name="reload", brief="Ein bestehendes Plugin neu laden.")
     @b5check("user",check="admin")
     async def b5reload(self,ctx,ext):
-        await b5('log').log(b5('ext').reloadExtension(ext))
+        try:
+            b5('ext').reloadExtension(ext)
+        except Exception as e:
+            await b5('log').log("reload "+ext+": exception\n"+str(e))
+        else:
+            await b5('log').log("reload "+ext+": success")
 
 
     @commands.command(name="shoo",brief="Leo schlafen schicken. Nur Adrian kann ihn dann neu starten.")
