@@ -18,6 +18,8 @@ from bot5utils import *
 import bot5utils
 from bot5utils import ext as b5
 
+import traceback
+
 FIRSTLINE = '# BOT5 EXTENSION'
 DEPENDS = '# DEPENDS: '
 
@@ -92,8 +94,10 @@ class ExtensionManager(commands.Cog):
             try:
                 return await b5('user').b5check(ctx,check='verified')
             except Exception as e:
+                trace = traceback.format_exc()
                 print("EXTENSION MANAGER: B5CHECK: exception")
                 print(str(e))
+                print(str(trace))
                 return False
         self.verifyCheck = _b5check
         self.bot.add_check(_b5check)

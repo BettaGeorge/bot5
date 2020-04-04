@@ -15,7 +15,11 @@ class Email:
         pass
 
     # WARNING: while I have managed to allow unicode characters (such as äöüß) in the message body, unicode in the subject line or sender or receiver might still cause problems.
-    def send(self, to: str, subject: str, msg: str):
+    # to is either an email address or a UserClass object.
+    def send(self, to, subject: str, msg: str):
+        receiver = to
+        if not isinstance(to,str):
+            receiver = to.get('rhrk')+'@rhrk.uni-kl.de'
         port = 465
         smtp_server='smtp.uni-kl.de'
         sender_user = b5config['email']['smtp user']
@@ -26,10 +30,10 @@ class Email:
         messagecontent = MIMEText(msg.encode('utf-8'),_charset='utf-8')
         messagecontent['Subject'] = subject
         messagecontent['From'] = sender_email
-        messagecontent['To'] = to
+        messagecontent['To'] = receiver
         with smtplib.SMTP_SSL(smtp_server,port,context=mailcontext) as mailserver:
             mailserver.login(sender_user,password)
-            mailserver.sendmail(sender_email,to,messagecontent.as_string())
+            mailserver.sendmail(sender_email,receiver,messagecontent.as_string())
 
 def setup(bot):
     b5('ext').register('email',Email())

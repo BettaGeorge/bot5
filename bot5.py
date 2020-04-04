@@ -13,7 +13,7 @@ from bot5utils import ext as b5
 
 import traceback
 
-client = commands.Bot(command_prefix=commands.when_mentioned_or('\\'))
+client = commands.Bot(command_prefix=commands.when_mentioned_or('?'))
 
 
 # WARNING: this is NOT GUARANTEED TO BE ONLY CALLED ONCE!

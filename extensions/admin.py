@@ -16,25 +16,6 @@ class Admin(commands.Cog,command_attrs=dict(hidden=True)):
 
 
 
-#    @user.command(name="know", brief="[DEBUG] introduce someone to Bot5")
-#    @checkAdmin()
-#    async def knowuser(self,ctx, member: Greedy[discord.Member]):
-#        for m in member:
-#            USERS[m.id] = b5.ext.User(m.id)
-#            await ctx.send("Ich kenne jetzt "+m.display_name+".")
-#
-#    @user.command(name="forget", brief="delete user from the record")
-#    @checkAdmin()
-#    async def unknowuser(self,ctx, member: Greedy[discord.Member]):
-#        for m in member:
-#            USERS.pop(m.id,None)
-#            await ctx.send("Ich habe vergessen, wer "+m.display_name+" ist.")
-
-
-
-
-
-
 class System(commands.Cog,command_attrs=dict(hidden=True)):
     def __init__(self,bot):
         self.bot = bot

@@ -39,12 +39,12 @@ Du kannst jederzeit die Löschung aller deiner gespeicherten Daten beantragen, i
 
 Solltest du irgendwelche Fragen zum Datenschutz haben, kannst du an die E-Mail-Adresse _fs.leo@mathematik.uni-kl.de_ schreiben.
 """)
-            await ctx.send("Ich habe dir eine private Nachricht geschickt.")
+            await b5('user').get(ctx.author.id).notifyAboutPM(ctx)
 
     @dsgvo.command(name="einsicht", brief="Alle über dich gespeicherten Informationen in einer PM an dich schicken.")
     async def dsgvoeinsicht(self,ctx):
         u = b5("user").get(ctx.author.id)
-        await u.sendPM(u.show(redacted=not u.isVerified()))
+        await u.sendPM(u.show(redacted=not u.get('verified')))
         await u.notifyAboutPM(ctx)
 
     @dsgvo.command(name="löschung", brief="Löscht alle deine Daten vom Server.")
@@ -60,7 +60,7 @@ Solltest du irgendwelche Fragen zum Datenschutz haben, kannst du an die E-Mail-A
         except:
             await ctx.send("Ich habe den Löschvorgang abgebrochen.")
         else:
-            if msg.content in ["ja","Ja"]:
+            if msg.content in ["ja","Ja","JA"]:
                 await ctx.send("Mach es gut!")
                 u = b5("user").get(ctx.author.id).inGuild()
                 await b5("log").log("removed a user")

@@ -7,15 +7,9 @@ import bot5utils
 from bot5utils import *
 from bot5utils import ext as b5
 
-from random import randint
 import time
 
-from enum import Enum
-
-import re
-re_ersti = re.compile('^sicherlich$',re.I)
-
-Account = Enum('Account','TUK ERSTI GUEST UNVERIFIED')
+import os
 
 # type hinting classes needs type vars:
 T = TypeVar('T')
@@ -123,18 +117,19 @@ class UserBase:
         self.users = {}
         self.fields = {} # map name of field to UserField() instance
 
-        try:
-            self.users = b5('persist').load('users.bot5')
-        except FileNotFoundError as e:
-            print(e)
-            print("Keine gespeicherten Nutzer. Bin ich neu geboren?")
-            # TODO: how to log this to Discord?
+        if os.path.isfile(b5path+'/user.debug'):
+            print("USER: DEBUG FILE FOUND")
+            self.loadRawData()
+        else:
 
-        try:
-            self.fields = b5('persist').load('userfields.bot5')
-        except FileNotFoundError as e:
-            print(e)
-            print("No user field savefile found.")
+            try:
+                self.users = b5('persist').load('users.bot5')
+            except FileNotFoundError as e:
+                print(e)
+                print("Keine gespeicherten Nutzer. Bin ich neu geboren?")
+                # TODO: how to log this to Discord?
+
+        self.registerField('user','id',int,0)
 
 
     def get(self,numid):
@@ -145,8 +140,8 @@ class UserBase:
         return u
 
     def add(self,numid):
-        u = UserClass(numid)
-        self.users[numid] = u
+        u = UserClass(int(numid))
+        self.users[int(numid)] = u
         return u
 
     def remove(self,numid):
@@ -159,6 +154,86 @@ class UserBase:
 
     def list(self):
         return [self.users[u] for u in self.users]
+
+    def registerField(self, extension: str, name: str, t: T, default: Type[T]) -> None:
+        if name in self.fields:
+            if self.fields[name].extension == extension:
+                # the extension has been loaded before, not to worry
+                return
+            else:
+                raise Bot5Error("field "+name+" already registered by extension "+self.fields[name].extension)
+
+        self.fields[name] = UserField(extension,t,default)
+
+    def getField(self, user: int, name: str):
+        if name not in self.fields:
+            raise Bot5Error('field '+name+' is not registered')
+        if not user in self.users:
+            raise Bot5Error('user id '+str(user)+' not found')
+        if name in self.users[user].values:
+            return self.users[user].values[name]
+        else:
+            return self.fields[name].default
+
+    def setField(self, user: int, name: str, value):
+        if name not in self.fields:
+            raise Bot5Error('field '+name+' is not registered')
+        if not isinstance(value,self.fields[name].type):
+            raise Bot5Error('field '
+                    +name
+                    +' is of type '
+                    +str(self.fields[name].type)
+                    +', cannot set it to a variable of type '
+                    +str(type(value)))
+        if not user in self.users:
+            raise Bot5Error('user id '+str(user)+' not found')
+        self.users[user].values[name] = value
+        return value
+
+    # set redacted to True if the user is unverified and should not be able to use this to gain insight into the server.
+    def showUser(self, user: int, redacted=False) -> str:
+        if user not in self.users:
+            raise Bot5Error('cannot show unknown user')
+        u = self.users[user].inGuild()
+        outp = []
+        def line(name,value):
+            outp.append(name+": "+str(value))
+        line("User",u.display_name)
+        line("Discord Account",u.name+'#'+u.discriminator)
+        line("Discord ID",user)
+        line("Roles",", ".join([r.name for r in u.roles[1:]]))
+
+        for n in self.fields:
+            if self.fields[n].showToUser:
+                line(n,self.getField(user,n))
+
+        return "\n".join(outp)
+
+    def loadRawData(self):
+        with open(b5path+'/datadump.user','r') as FILE:
+            lastid = 0
+            for line in FILE.readlines():
+                if len(line.strip())==0:
+                    print("empty line in datadump")
+                    continue
+                vals = line.strip().split(':::')
+                if vals[0] == 'id':
+                    self.add(int(vals[1]))
+                    lastid = int(vals[1])
+                else:
+                    nval = vals[1]
+                    if nval == 'True':
+                        nval = True
+                    elif nval == 'False':
+                        nval = False
+                    elif nval.isdigit():
+                        nval = int(nval)
+                    if vals[0] in self.fields:
+                        nval = self.fields[val[0]].type(nval)
+                    self.users[lastid].values[vals[0]] = vals[1]
+
+
+
 
     
     # custom check for user attributes
@@ -182,7 +257,7 @@ class UserBase:
                 await ctx.message.add_reaction('\N{ANGRY FACE}')
                 return False
         if check == "verified":
-            if ext('user').get(ctx.author.id).isVerified():
+            if ext('user').getField(ctx.author.id,'verified'):
                 return True
             else:
                 await ctx.send("Dieser Befehl ist nur für verifizierte Benutzer verfügbar.")
@@ -190,14 +265,16 @@ class UserBase:
         return False
 
 class UserField:
-    def __init__(self, extension: str, t: T, default: Type[T]):
+    # set showToUser to False to exclude it from dsgvo einsicht for everyone.
+    def __init__(self, extension: str, t: T, default: Type[T], showToUser: bool=True):
         self.extension = extension
         self.type = t
         self.default = default
+        self.showToUser = showToUser
 
 class UserClass:
 # note: keep this class pickleable!
-    def __init__(self,numid):
+    def __init__(self,numid: int):
         self.values = {}
         self.values["id"] = numid
 
@@ -216,7 +293,15 @@ class UserClass:
     def __set(self,what,val):
         self.values[what] = val
 
-    # GETTERS
+    # NEW GETTER AND SETTER
+
+    def get(self,what: str):
+        return b5('user').getField(self.values["id"],what)
+
+    def set(self,what: str,val):
+        return b5('user').setField(self.values['id'],what,val)
+
+    # SPIECLIAZED GETTERS
 
     def inGuild(self):
         m = discord.utils.get(b5('ext').guild().members,id=self.getID())
@@ -225,36 +310,6 @@ class UserClass:
     def getID(self):
         return self.values["id"]
 
-    def isVerified(self):
-        v = self.__get("verified")
-        if v is None:
-            return False
-        return v
-
-    def getAuthCode(self):
-        c = self.__get("authCode")
-        if c is None:
-            return 0
-        return c
-
-    def authValidUntil(self):
-        a = self.__get("authValidUntil")
-        if a is None:
-            return 0
-        return a
-
-    def getErstiVerifyAttempts(self):
-        e = self.__get("erstiVerifyAttempts")
-        if e is None:
-            return 0
-        return e
-
-    def getRHRK(self):
-        r = self.__get("rhrk")
-        if r is None:
-            return ''
-        return r
-    
     def isAdmin(self):
         return self.isRole("Admin")
 
@@ -264,78 +319,20 @@ class UserClass:
         else:
             return False
 
-    def getAccountType(self):
-        a = self.__get('account')
-        if a is None:
-            return Account.UNVERIFIED
-        return a
-
-    # SETTERS
-
-    def setRHRK(self,rhrk):
-        self.__set("rhrk",rhrk)
-
-    def setAccountType(self,t):
-        self.__set("account",t)
-
-    def setAuthCode(self,code):
-        self.__set("authCode",code)
-
-    def setAuthValidUntil(self,til):
-        self.__set("authValidUntil",til)
-
 
     # OTHER METHODS (NO SIDE EFFECTS)
     # (not counting discord output)
 
     # set redacted to True if the user is unverified and should not be able to use this to gain insight into the server.
     def show(self, redacted=False):
-        u = self.inGuild()
-        outp = []
-        def line(name,value):
-            outp.append(name+": "+str(value))
-        line("User",u.display_name)
-        line("Discord Account",u.name+'#'+u.discriminator)
-        line("Discord ID",self.getID())
-        line("Account type",self.getAccountType())
-        line("verified", ("yes" if self.isVerified() else "no"))
-        line("RHRK user",self.getRHRK())
-        line("Roles",", ".join([r.name for r in u.roles[1:]]))
-        redacted or line("Authentication Code",self.getAuthCode())
-        line("Authentication Code valid until",time.strftime('%d. %m. %Y, %H:%M:%S (%Z)',time.localtime(self.authValidUntil())))
-        return "\n".join(outp)
-        #ver = "yes" if self.isVerified() else "no"
-        #return "User "+str(u.display_name)+"\nDiscord ID:"+str(self.getID())+"\nverified: "+ver+"\nrhrk user: "+self.getRHRK()
+        return b5('user').showUser(self.getID(),redacted)
 
 
     # OTHER METHODS (YES SIDE EFFECTS)
 
-    async def verify(self, code: int, force=False, accountType=Account.TUK):
-        if force or (self.getAuthCode() > 0 and code == self.getAuthCode() and time.time() < self.authValidUntil()):
-            self.__set("verified", True)
-            newrole = discord.utils.get(b5('ext').guild().roles,name="Studi")
-            await self.inGuild().add_roles(newrole)
-            self.setAccountType(accountType)
-        return self.isVerified()
-
-    async def forceVerify(self):
-        return await self.verify(0,True)
-
-    async def erstiVerify(self, wort: str):
-        self.__set("erstiVerifyAttempts", self.getErstiVerifyAttempts()+1)
-        match = re_ersti.match(wort)
-        if match is None:
-            return False
-        self.__set("semester",1)
-        newrole = discord.utils.get(b5('ext').guild().roles,name="Ersti")
-        await self.inGuild().add_roles(newrole)
-        await self.verify(0,force=True,accountType=Account.ERSTI)
-        return True
 
 
 
-    def email(self,subject,message):
-        b5('email').send(self.getRHRK()+"@rhrk.uni-kl.de",subject,message)
 
 
     async def sendPM(self,msg):
@@ -348,10 +345,6 @@ class UserClass:
             await ctx.send("Ich habe dir eine private Nachricht geschickt.")
 
 
-    def generateAuthCode(self, timeout=60*60):
-        self.setAuthCode(randint(1,10000))
-        self.setAuthValidUntil(time.time()+timeout)
-        return self.getAuthCode()
 
 
 
