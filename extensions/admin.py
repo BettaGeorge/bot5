@@ -77,7 +77,7 @@ class System(commands.Cog,command_attrs=dict(hidden=True)):
     @commands.command(name="send",brief="Leo in einem bestimmten Channel etwas sagen lassen.")
     @b5check("user",check="admin")
     async def b5send(self, ctx, channel: str, message: str):
-        c = discord.utils.get(bot5utils.GUILD.text_channels,name=channel)
+        c = discord.utils.get(bot5utils.b5('ext').guild().text_channels,name=channel)
         if c is not None:
             await c.send(message)
 
@@ -87,7 +87,7 @@ class System(commands.Cog,command_attrs=dict(hidden=True)):
     async def b5pm(self,ctx,user:str):
         username = user[0:-5]
         userdisc = user[-4:]
-        u = discord.utils.get(bot5utils.GUILD.members,name=username,discriminator=userdisc)
+        u = discord.utils.get(bot5utils.b5('ext').guild().members,name=username,discriminator=userdisc)
         if u is None:
             await ctx.send("Dieser User ist nicht auf dem Server.")
             return

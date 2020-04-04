@@ -420,7 +420,7 @@ class LeoInterpreter:
                     ret = await interpreter.run()
                     self.current = LeoMessage(ret,None,None)
                 else:
-                    c = discord.utils.get(bot5utils.GUILD.channels,name=varTo)
+                    c = discord.utils.get(bot5utils.b5('ext').guild().channels,name=varTo)
                     if c is None:
                         raise LeoError(self,'Ich kenne keinen Channel '+varTo+'.')
                     perm = c.permissions_for(self.user.inGuild())
@@ -471,7 +471,7 @@ class LeoInterpreter:
                     targetChannel = self.ctx
                 else:
                     try:
-                        targetChannel = discord.utils.get(bot5utils.GUILD.channels,name=targetChannel)
+                        targetChannel = discord.utils.get(bot5utils.b5('ext').guild().channels,name=targetChannel)
                     except:
                         raise LeoError(self,"Ich kann den Channel "+str(mInput.group(2))+" nicht finden.")
 

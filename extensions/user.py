@@ -48,16 +48,16 @@ class UserCog(commands.Cog,name="User",command_attrs=dict(hidden=True)):
     @b5check("user",check="admin")
     async def userlistunknown(self,ctx):
         known = [u.getID() for u in b5("user").list()]
-        for m in bot5utils.GUILD.members:
+        for m in b5('ext').guild().members:
             if m.id not in known:
-                await ctx.send(str(m)+", roles: "+str(discord.utils.get(bot5utils.GUILD.members,id=m.id).roles))
+                await ctx.send(str(m)+", roles: "+str(discord.utils.get(b5('ext').guild().members,id=m.id).roles))
 
     @userlist.command(name="slipped",brief="Zeige die Benutzer, die zwar verifiziert sind, aber nicht in der Datenbank.")
     @b5check("user",check="admin")
     async def userlistslipped(self,ctx):
         known = [u.getID() for u in b5("user").list()]
-        for m in bot5utils.GUILD.members:
-            if m.id not in known and len(discord.utils.get(bot5utils.GUILD.members,id=m.id).roles)>1:
+        for m in b5('ext').guild().members:
+            if m.id not in known and len(discord.utils.get(b5('ext').guild().members,id=m.id).roles)>1:
                 await ctx.send(m)
 
     @user.command(name="verify",brief="Benutzer freischalten.")
@@ -219,7 +219,7 @@ class UserClass:
     # GETTERS
 
     def inGuild(self):
-        m = discord.utils.get(bot5utils.GUILD.members,id=self.getID())
+        m = discord.utils.get(b5('ext').guild().members,id=self.getID())
         return m
 
     def getID(self):
@@ -259,7 +259,7 @@ class UserClass:
         return self.isRole("Admin")
 
     def isRole(self, role: str):
-        if discord.utils.get(GUILD.roles,name=role) in self.inGuild().roles:
+        if discord.utils.get(b5('ext').guild().roles,name=role) in self.inGuild().roles:
             return True
         else:
             return False
@@ -313,7 +313,7 @@ class UserClass:
     async def verify(self, code: int, force=False, accountType=Account.TUK):
         if force or (self.getAuthCode() > 0 and code == self.getAuthCode() and time.time() < self.authValidUntil()):
             self.__set("verified", True)
-            newrole = discord.utils.get(GUILD.roles,name="Studi")
+            newrole = discord.utils.get(b5('ext').guild().roles,name="Studi")
             await self.inGuild().add_roles(newrole)
             self.setAccountType(accountType)
         return self.isVerified()
@@ -327,7 +327,7 @@ class UserClass:
         if match is None:
             return False
         self.__set("semester",1)
-        newrole = discord.utils.get(GUILD.roles,name="Ersti")
+        newrole = discord.utils.get(b5('ext').guild().roles,name="Ersti")
         await self.inGuild().add_roles(newrole)
         await self.verify(0,force=True,accountType=Account.ERSTI)
         return True

@@ -251,6 +251,9 @@ class ExtensionManager(commands.Cog):
         for ext in reversed(unloaded):
             self.loadExtension(ext)
 
+    def guild(self):
+        return  discord.utils.get(self.bot.guilds,name=bot5utils.GUILDNAME)
+
 
 
 def setup(bot):

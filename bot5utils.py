@@ -68,7 +68,7 @@ b5path = confpath
 
 TOKEN = b5secret.get('discord','bot token',fallback='')
 GUILDNAME = b5config.get('discord','guild',fallback='')
-GUILD = None
+#GUILD = None
 
 # this shall reference the unique instance of the class ExtensionVariables from the extensionmanager extension.
 extensionVariables = None
