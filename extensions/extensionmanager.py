@@ -20,6 +20,8 @@ from bot5utils import ext as b5
 
 import traceback
 
+from string import Template # allows us to do internationalization magic
+
 FIRSTLINE = '# BOT5 EXTENSION'
 DEPENDS = '# DEPENDS: '
 
@@ -136,6 +138,104 @@ class ExtensionManager(commands.Cog):
 
     def get(self,identifier):
         return self.vars[identifier]
+
+    # returns a function to which you pass a templated string and keyworded substitutions and which returns a string.
+    def _(self, extension: str):
+        def notranslation(text: str, **kwargs):
+            t = Template(text)
+            return t.safe_substitute(**kwargs)
+        if 'translations' not in b5config:
+            return notranslation
+        if extension not in b5config['translation']:
+            return notranslation
+        with open(b5path+'/'+b5config['translation'][extension],'r') as FILE:
+            lines = FILE.readlines()
+        # format of the translation file (fixed now and forevermore):
+        #
+        # original string (possibly multiple lines)
+        # ===
+        # translated string (possibly multiple lines)
+        # +++
+        # +++
+        # another original string ...
+        #
+        # The file MUST end with +++.
+        # both delimiters can be overridden in the config file.
+        # TODO: allow overriding in the translation file
+        deltrans = b5config.get('translation',extension+' delimiter 1',fallback='===')+"\n"
+        delnew = b5config.get('translation',extension+' delimiter 2',fallback='+++')+"\n"
+        d = {} # will hold original=>translation
+        last = 0 # 0: last line read was the second +++; 1: was an original, 2: was ===, 3: was translation, 4: was first +++
+        orig = ''
+        trans = ''
+        for line in lines:
+            if last == 0:
+                if line == deltrans or line == delnew:
+                    raise Bot5Error('malformatted translation file')
+                orig = line
+                last = 1
+            elif last == 1:
+                if line == delnew:
+                    # this is an allowed shorthand to denote "do not translate"
+                    trans = ''
+                    last = 4
+                elif line == deltrans:
+                    # this is expected. Nothing to do.
+                    last = 2
+                else:
+                    # the original is multiline.
+                    orig = orig+line
+            elif last == 2:
+                if line == deltrans:
+                    # two of these delimiters after each other must be a mistake.
+                    raise Bot5Error('malformatted translation file: two consecutive === delimiters')
+                if line == delnew:
+                    # no translation? Okay.
+                    trans = ''
+                    last = 4
+                else:
+                    # the translation starts here
+                    trans = line
+                    last = 3
+            elif last == 3:
+                if line == deltrans:
+                    # this cannot happen.
+                    raise Bot5Error('malformatted translation file: === encountered within translation')
+                if line == delnew:
+                    # translation over; save it
+                    # if the translation is empty, do not save anything. The method defined below automatically returns the original string in this case.
+                    # This cuts down on used memory and hashing operations.
+                    tr = trans.strip()
+                    ori = orig.strip()
+                    if len(tr) == 0:
+                        pass
+                    else:
+                        d[ori] = tr
+                    last = 4
+                else:
+                    # multiline translation
+                    trans = trans+line
+            elif last == 4:
+                # if we have not reached the end of the file after reading the first +++, we expect another in order to start over.
+                if line == delnew:
+                    last = 0
+                else:
+                    raise Bot5Error('malformatted translation file: expected a second +++')
+
+        # d now contains a full mapping original => translated with templates not substituted.
+
+        def translate(text: str, **kwargs):
+            if text in d:
+                trans = d[text]
+            else:
+                trans = text
+            t = Template(trans)
+            return t.safe_substitute(**kwargs)
+
+        return translate
+
+                
+
 
     # tries to (re)load an extension. Returns a string that should be logged in an appropriate place (since it doesn't know the context in which it was called!)
     # depending on where you called this, either log the string in something like ctx.send(), or simply print() it to stdout or a file.
