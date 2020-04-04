@@ -25,14 +25,18 @@ AUTH_TIMEOUT = 60*60
 
 Account = Enum('Account','TUK ERSTI GUEST UNVERIFIED')
 
+print("setting up translations")
+_ = b5('ext')._('authentication')
+
+
 
 class Authentication(commands.Cog, name="Registrierung"):
     def __init__(self,bot):
         self.bot = bot
 
     async def welcomeMessage(self,u):
-        await u.sendPM("Hallo "+u.inGuild().name+"! Ich bin Leo, das Maskottchen der Fachschaft Mathematik. Ich sorge dafür, dass auf dem fünften Stock alles funktioniert.")
-        await u.sendPM("Um Spam zu vermeiden, dürfen nur Mitglieder der TUK den fünften Stock betreten. Bitte schreib mir eine Nachricht der Form `\\rhrk nutzer`, wobei du 'nutzer' durch deinen Nutzernamen beim RHRK ersetzt (vergiss nicht den Backslash ganz am Anfang, wie bei LaTeX). Ich schicke dir dann eine Nachricht an deine RHRK-Email, um deine Identität zu bestätigen.")
+        await u.sendPM(_("Hallo $username! Ich bin Leo, das Maskottchen der Fachschaft Mathematik. Ich sorge dafür, dass auf dem fünften Stock alles funktioniert.",username=u.inGuild().name))
+        await u.sendPM(_("Um Spam zu vermeiden, dürfen nur Mitglieder der TUK den fünften Stock betreten. Bitte schreib mir eine Nachricht der Form `\\rhrk nutzer`, wobei du 'nutzer' durch deinen Nutzernamen beim RHRK ersetzt (vergiss nicht den Backslash ganz am Anfang, wie bei LaTeX). Ich schicke dir dann eine Nachricht an deine RHRK-Email, um deine Identität zu bestätigen."))
         await u.sendPM("Falls du Ersti bist (und noch keinen RHRK-Login per Post erhalten hast), schreibe stattdessen `\\ersti`.")
         await u.sendPM("Solltest du einmal vergessen, wie du mit mir redest, gib einfach hier oder irgendwo auf dem fünften Stock `\\hilfe `ein.")
         await u.sendPM("Mit der Nutzung der Befehle `\\rhrk` oder `\\ersti` stimmst du der automatisierten Verarbeitung deiner Daten auf unserem Server zu. Für weitere Informationen gib `\\dsgvo` ein, um unsere Datenschutzerklärung einzusehen.")

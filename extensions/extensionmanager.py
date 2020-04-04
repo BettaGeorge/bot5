@@ -144,7 +144,7 @@ class ExtensionManager(commands.Cog):
         def notranslation(text: str, **kwargs):
             t = Template(text)
             return t.safe_substitute(**kwargs)
-        if 'translations' not in b5config:
+        if 'translation' not in b5config:
             return notranslation
         if extension not in b5config['translation']:
             return notranslation
@@ -162,8 +162,10 @@ class ExtensionManager(commands.Cog):
         # The file MUST end with +++.
         # both delimiters can be overridden in the config file.
         # TODO: allow overriding in the translation file
+        print("DEBUG: parsing "+extension+" translation")
         deltrans = b5config.get('translation',extension+' delimiter 1',fallback='===')+"\n"
-        delnew = b5config.get('translation',extension+' delimiter 2',fallback='+++')+"\n"
+        delnewNoNewline = b5config.get('translation',extension+' delimiter 2',fallback='+++')
+        delnew = delnewNoNewline + "\n"
         d = {} # will hold original=>translation
         last = 0 # 0: last line read was the second +++; 1: was an original, 2: was ===, 3: was translation, 4: was first +++
         orig = ''
@@ -201,7 +203,7 @@ class ExtensionManager(commands.Cog):
                 if line == deltrans:
                     # this cannot happen.
                     raise Bot5Error('malformatted translation file: === encountered within translation')
-                if line == delnew:
+                if line == delnew or line == delnewNoNewline: # this is the only point at which we may encounter no line break: we might be at the end of the file.
                     # translation over; save it
                     # if the translation is empty, do not save anything. The method defined below automatically returns the original string in this case.
                     # This cuts down on used memory and hashing operations.
@@ -229,6 +231,7 @@ class ExtensionManager(commands.Cog):
                 trans = d[text]
             else:
                 trans = text
+            print(trans)
             t = Template(trans)
             return t.safe_substitute(**kwargs)
 
