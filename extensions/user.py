@@ -17,6 +17,9 @@ re_ersti = re.compile('^sicherlich$',re.I)
 
 Account = Enum('Account','TUK ERSTI GUEST UNVERIFIED')
 
+# type hinting classes needs type vars:
+T = TypeVar('T')
+
 class UserCog(commands.Cog,name="User",command_attrs=dict(hidden=True)):
 
     def __init__(self,bot):
@@ -118,6 +121,7 @@ class UserBase:
     # a database for our users
     def __init__(self):
         self.users = {}
+        self.fields = {} # map name of field to UserField() instance
 
         try:
             self.users = b5('persist').load('users.bot5')
@@ -126,7 +130,11 @@ class UserBase:
             print("Keine gespeicherten Nutzer. Bin ich neu geboren?")
             # TODO: how to log this to Discord?
 
-
+        try:
+            self.fields = b5('persist').load('userfields.bot5')
+        except FileNotFoundError as e:
+            print(e)
+            print("No user field savefile found.")
 
 
     def get(self,numid):
@@ -180,6 +188,12 @@ class UserBase:
                 await ctx.send("Dieser Befehl ist nur für verifizierte Benutzer verfügbar.")
                 return False
         return False
+
+class UserField:
+    def __init__(self, extension: str, t: T, default: Type[T]):
+        self.extension = extension
+        self.type = t
+        self.default = default
 
 class UserClass:
 # note: keep this class pickleable!
