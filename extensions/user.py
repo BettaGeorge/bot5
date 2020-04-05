@@ -14,31 +14,31 @@ import os
 # type hinting classes needs type vars:
 T = TypeVar('T')
 
-class UserCog(commands.Cog,name="User",command_attrs=dict(hidden=True)):
+class UserCog(commands.Cog,name=_("User Mangement"),command_attrs=dict(hidden=True)):
 
     def __init__(self,bot):
         self.bot = bot
 
-    @commands.group()
+    @commands.group(name=_("user"))
     @b5check("user",check="admin")
     async def user(self,ctx:commands.Context) -> None:
         if ctx.invoked_subcommand is None:
-            await ctx.send("Bitte gib ein Kommando an")
+            await ctx.send(_("No subcommand entered."))
 
-    @user.command(name="info",brief="show what Bot5 knows about a user")
+    @user.command(name=_("info"),brief=_("Show what Bot5 knows about a user."))
     @b5check("user",check="admin")
     async def userinfo(self,ctx: commands.Context, members: Greedy[discord.Member]) -> None:
         for m in members:
-            await ctx.send(b5('user').get(m.id).show())
+            await ctx.send(b5('user').get(m.id).show(debug=True))
 
-    @user.group(name="list",brief="show a list of all users known to Bot5")
+    @user.group(name=_("list"),brief=_("Show a list of all users known to Bot5."))
     @b5check("user",check="admin")
     async def userlist(self,ctx: commands.Context) -> None:
         if ctx.invoked_subcommand is None:
             await ctx.send(str(b5('user').nameList()))
 
 
-    @userlist.command(name="unknown",brief="Zeige die Benutzer, die auf dem Server sind, aber nicht in der Datenbank.")
+    @userlist.command(name=_("unknown"),brief=_("List of users that are in the guild but not our database."))
     @b5check("user",check="admin")
     async def userlistunknown(self,ctx):
         known = [u.getID() for u in b5("user").list()]
@@ -46,70 +46,80 @@ class UserCog(commands.Cog,name="User",command_attrs=dict(hidden=True)):
             if m.id not in known:
                 await ctx.send(str(m)+", roles: "+str(discord.utils.get(b5('ext').guild().members,id=m.id).roles))
 
-    @userlist.command(name="slipped",brief="Zeige die Benutzer, die zwar verifiziert sind, aber nicht in der Datenbank.")
+    @userlist.command(name=_("slipped"),brief=_("List of users that are verified but not in our database."))
     @b5check("user",check="admin")
     async def userlistslipped(self,ctx):
+        if b5('auth') is None:
+            await ctx.send(_("Authentication extension not loaded."))
+            return
+
         known = [u.getID() for u in b5("user").list()]
         for m in b5('ext').guild().members:
             if m.id not in known and len(discord.utils.get(b5('ext').guild().members,id=m.id).roles)>1:
                 await ctx.send(m)
 
-    @user.command(name="verify",brief="Benutzer freischalten.")
+    @user.command(name=_("verify"),brief=_("Verify a user."))
     @b5check("user",check="admin")
     async def userverify(self,ctx,members: Greedy[discord.Member]):
+        if b5('auth') is None:
+            await ctx.send(_("Authentication extension not loaded."))
+            return
         for m in members:
             u = b5("user").get(m.id)
             if u is None:
-                await ctx.send(m.display_name+" nicht gefunden.")
+                await ctx.send(_("User $displayname not found.",displayname=m.display_name))
             else:
-                await u.forceVerify()
-                await ctx.send(u.inGuild().display_name+" ist jetzt verifiziert.")
+                await b5('auth').verify(u,0,force=True)
+                await ctx.send(_("User $displayname is now verified.",displayname=u.inGuild().display_name))
 
-    @user.command(name="guest",brief="Benutzer als Gast freischalten.")
+    @user.command(name=_("guest"),brief=_("Verify a guest account."))
     @b5check("user",check="admin")
     async def userguest(self,ctx,members: Greedy[discord.Member]):
+        if b5('auth') is None:
+            await ctx.send(_("Authentication extension not loaded."))
+            return
         for m in members:
             u = b5("user").get(m.id)
             if u is None:
-                await ctx.send(m.display_name+" nicht gefunden.")
+                await ctx.send(_("User $displayname not found.",displayname=m.display_name))
             else:
-                await u.verify(0,force=True,accountType=Account.GUEST)
-                await ctx.send(u.inGuild().display_name+" ist jetzt verifiziert.")
+                await b5('auth').verify(u,0,force=True,accountType=Account.GUEST)
+                await ctx.send(_("User $displayname is now verified.",displayname=u.inGuild().display_name))
 
-    @user.command(name="know",brief="Benutzer zur Datenbank hinzufügen.")
+    @user.command(name=_("know"),brief=_("Add user to database."))
     @b5check("user",check="admin")
     async def userknow(self,ctx,members:Greedy[discord.Member]):
         for m in members:
             b5("user").add(m.id)
-            await ctx.send("Ich kenne jetzt "+m.display_name+".")
+            await ctx.send(_("$displayname has been added to the database.",displayname=m.display_name))
 
-    @user.command(name="forget",brief="Benutzer aus der Datenbank entfernen.")
+    @user.command(name=_("forget"),brief=_("Remove a user from the database."))
     @b5check("user",check="admin")
     async def userforget(self,ctx,members:Greedy[discord.Member]):
         for m in members:
             b5("user").remove(m.id)
-            await ctx.send("Ich habe "+m.display_name+" vergessen.")
+            await ctx.send(_("User $displayname has been removed from the database.",displayname=m.display_name))
 
-    @user.command(name="set",brief="Ein Attribut des Benutzers setzen")
+    @user.command(name=_("set"),brief=_("Set a user attribute."))
     @b5check("user",check="admin")
     async def userset(self,ctx, mem: discord.Member, attribute: str, value):
         m = b5('user').get(mem.id)
         if m is None:
-            await ctx.send("Diese Person kenne ich nicht.")
+            await ctx.send(_("User $displayname not found.",displayname=mem.display_name))
         else:
-            m.__set(attribute,value)
-        await ctx.send("Ich habe mir den Wert notiert.")
+            m.set(attribute,value)
+        await ctx.send(_("Value has been set."))
 
-    @user.command(name="welcome",brief="Die Willkommensnachricht (erneut) senden.")
+    @user.command(name=_("welcome"),brief=_("Resend welcome message to user."))
     @b5check("user",check="admin")
     async def userwelcome(self,ctx,members:Greedy[discord.Member]):
         for m in members:
             u = b5('user').get(m.id)
             if u is None:
-                await ctx.send(m.display_name+" kenne ich nicht.")
+                await ctx.send(_("User $displayname not found.",displayname=m.display_name))
             else:
                 await b5('auth').welcomeMessage(u)
-                await ctx.send("Gesendet.")
+                await ctx.send(_("Message sent."))
 
 class UserBase:
     # a database for our users
@@ -190,8 +200,8 @@ class UserBase:
         self.users[user].values[name] = value
         return value
 
-    # set redacted to True if the user is unverified and should not be able to use this to gain insight into the server.
-    def showUser(self, user: int, redacted=False) -> str:
+    # set debug to true to show everything, even stuff normal users should never see, like their own auth code.
+    def showUser(self, user: int, debug=False) -> str:
         if user not in self.users:
             raise Bot5Error('cannot show unknown user')
         u = self.users[user].inGuild()
@@ -204,7 +214,7 @@ class UserBase:
         line("Roles",", ".join([r.name for r in u.roles[1:]]))
 
         for n in self.fields:
-            if self.fields[n].showToUser:
+            if debug or self.fields[n].showToUser:
                 line(n,self.getField(user,n))
 
         return "\n".join(outp)
@@ -239,7 +249,7 @@ class UserBase:
     # custom check for user attributes
     async def b5check(self, ctx, check="admin", role=None):
         #return True
-        print("userb5check "+str(check)+" called.")
+        #print("userb5check "+str(check)+" called.")
         if role is not None:
             rl = role
             if isinstance(role,str):
@@ -247,20 +257,20 @@ class UserBase:
             for r in rl:
                 if b5('user').get(ctx.author.id).isRole(r):
                     return True
-            await ctx.send("Du musst eine der folgenden Rollen haben, um diesen Befehl zu verwenden:\n"+str(rl))
+            #await ctx.send("Du musst eine der folgenden Rollen haben, um diesen Befehl zu verwenden:\n"+str(rl))
             return False
         if check == "admin":
             if ext('user').get(ctx.author.id).isAdmin():
                 return True
             else:
-                await ctx.send("Du bist nicht mein Boss!")
-                await ctx.message.add_reaction('\N{ANGRY FACE}')
+                #await ctx.send("Du bist nicht mein Boss!")
+                #await ctx.message.add_reaction('\N{ANGRY FACE}')
                 return False
         if check == "verified":
             if ext('user').getField(ctx.author.id,'verified'):
                 return True
             else:
-                await ctx.send("Dieser Befehl ist nur für verifizierte Benutzer verfügbar.")
+                #await ctx.send("Dieser Befehl ist nur für verifizierte Benutzer verfügbar.")
                 return False
         return False
 
@@ -323,9 +333,8 @@ class UserClass:
     # OTHER METHODS (NO SIDE EFFECTS)
     # (not counting discord output)
 
-    # set redacted to True if the user is unverified and should not be able to use this to gain insight into the server.
-    def show(self, redacted=False):
-        return b5('user').showUser(self.getID(),redacted)
+    def show(self, debug=False):
+        return b5('user').showUser(self.getID(),debug)
 
 
     # OTHER METHODS (YES SIDE EFFECTS)
@@ -359,4 +368,4 @@ def setup(bot):
 def teardown(bot):
     b5('persist').save('users.bot5',b5('user').users)
     b5('ext').unregister('user')
-    bot.remove_cog('User')
+    bot.remove_cog(_('User Management'))

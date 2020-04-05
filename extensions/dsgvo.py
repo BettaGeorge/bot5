@@ -44,7 +44,7 @@ Solltest du irgendwelche Fragen zum Datenschutz haben, kannst du an die E-Mail-A
     @dsgvo.command(name="einsicht", brief="Alle über dich gespeicherten Informationen in einer PM an dich schicken.")
     async def dsgvoeinsicht(self,ctx):
         u = b5("user").get(ctx.author.id)
-        await u.sendPM(u.show(redacted=not u.get('verified')))
+        await u.sendPM(u.show())
         await u.notifyAboutPM(ctx)
 
     @dsgvo.command(name="löschung", brief="Löscht alle deine Daten vom Server.")

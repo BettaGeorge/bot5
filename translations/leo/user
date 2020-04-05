@@ -1,0 +1,70 @@
+User Management
+===
+Benutzerverwaltung
++++
++++
+user
+===
+nutzer
++++
++++
+No subcommand entered.
+===
+Bitte gib ein Kommando an.
++++
++++
+List of users that are in the guild but not our database.
+===
+Zeige die Benutzer, die auf dem Server sind, aber nicht in der Datenbank.
++++
++++
+List of users that are verified but not in our database.
+===
+Zeige die Benutzer, die zwar verifiziert sind, aber nicht in der Datenbank.
++++
++++
+Verify a user.
+===
+Benutzer freischalten.
++++
++++
+Verify a guest account.
+===
+Benutzer als Gast freischalten.
++++
++++
+Add user to database.
+===
+Benutzer zur Datenbank hinzufügen.
++++
++++
+$displayname has been added to the database.
+===
+Ich kenne jetzt $displayname.
++++
++++
+Remove a user from the database.
+===
+Benutzer aus der Datenbank entfernen.
++++
++++
+User $displayname has been removed from the database.
+===
+"Ich habe "+m.display_name+" vergessen."
++++
++++
+Set a user attribute.
+===
+Ein Attribut des Benutzers setzen.
++++
++++
+Value has been set.
+===
+Ich habe mir den Wert notiert.
++++
++++
+Resend welcome message to user.
+===
+Die Willkommensnachricht (erneut) senden.
++++
++++
