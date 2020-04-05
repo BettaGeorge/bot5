@@ -35,11 +35,7 @@ class Authentication(commands.Cog, name="Registrierung"):
         self.bot = bot
 
     async def welcomeMessage(self,u):
-        await u.sendPM(_("Hallo $username! Ich bin Leo, das Maskottchen der Fachschaft Mathematik. Ich sorge dafür, dass auf dem fünften Stock alles funktioniert.",username=u.inGuild().name))
-        await u.sendPM(_("Um Spam zu vermeiden, dürfen nur Mitglieder der TUK den fünften Stock betreten. Bitte schreib mir eine Nachricht der Form `\\rhrk nutzer`, wobei du 'nutzer' durch deinen Nutzernamen beim RHRK ersetzt (vergiss nicht den Backslash ganz am Anfang, wie bei LaTeX). Ich schicke dir dann eine Nachricht an deine RHRK-Email, um deine Identität zu bestätigen."))
-        await u.sendPM("Falls du Ersti bist (und noch keinen RHRK-Login per Post erhalten hast), schreibe stattdessen `\\ersti`.")
-        await u.sendPM("Solltest du einmal vergessen, wie du mit mir redest, gib einfach hier oder irgendwo auf dem fünften Stock `\\hilfe `ein.")
-        await u.sendPM("Mit der Nutzung der Befehle `\\rhrk` oder `\\ersti` stimmst du der automatisierten Verarbeitung deiner Daten auf unserem Server zu. Für weitere Informationen gib `\\dsgvo` ein, um unsere Datenschutzerklärung einzusehen.")
+        await u.sendPM(_("Hello $username! Welcome to our server.",username=u.inGuild().name))
 
     async def verify(self, 
             user,
@@ -92,17 +88,17 @@ class Authentication(commands.Cog, name="Registrierung"):
             return
         b5('user').remove(member.id)
 
-    @commands.command(name="rhrk",brief="Deinen RHRK-Nutzernamen setzen.")
+    @commands.command(name=_("rhrk"),brief=_("Set your RHRK username."))
     async def rhrk(self,ctx,*args):
 
         # we need an argument:
         if len(args) == 0:
-            await ctx.send("Bitte gib einen Nutzernamen an.")
+            await ctx.send(_("Please provide a username."))
             return
 
         # TODO: allow Erstis to set their RHRK account a posteriori
         if b5('user').get(ctx.author.id) is not None and b5('user').get(ctx.author.id).get('verified'):
-            await ctx.send("Dein Account ist bereits verifiziert.")
+            await ctx.send(_("Your account is already verified."))
             return
 
         async with ctx.channel.typing():
@@ -111,7 +107,7 @@ class Authentication(commands.Cog, name="Registrierung"):
             try:
                 u = b5('user').get(ctx.author.id)
             except KeyError:
-                await ctx.send("Etwas ist schrecklich schief gelaufen. Bitte verlasse den Server und tritt neu bei.")
+                await ctx.send("Database error. Please leave the server and rejoin via the invite link.")
                 raise Bot5Error("rhrk: user was None")
                 return
 
@@ -120,74 +116,72 @@ class Authentication(commands.Cog, name="Registrierung"):
             auth_int = self.generateAuthCode(u,timeout=AUTH_TIMEOUT) #randint(1,10000)
             
             # try sending an email with the generated code
-            mailcontent = f"Du bekommst diese E-Mail, weil du dich auf dem Discord-Server im 5. Stock angemeldet hast. Dein Authentifizierungscode ist {auth_int}. Sende Leo folgende Nachricht:\n\n\\code {auth_int}\n\nDu hast eine Stunde lang Zeit, um den Code zu verwenden.\n\nDein Leo"
+            mailcontent = _("You are getting this email because you requested a verification code from Bot5. Your code is $code.",code=auth_int)
             try:
-                b5('email').send(rhrk_mail+'@rhrk.uni-kl.de',"Discord: 5. Stock",mailcontent)
+                b5('email').send(rhrk_mail+'@rhrk.uni-kl.de',_("Bot5 Verification Email"),mailcontent)
             except Exception as e:
                 print(e)
-                await ctx.send("Ich konnte dir keine E-Mail schicken. Bitte versuche es erneut oder kontaktiere einen Admin per Mail an fs.leo@mathematik.uni-kl.de.")
+                await ctx.send(_("Could not send you an email."))
                 return
 
         u.set('rhrk',rhrk_mail)
-        await ctx.send(f"Ich habe dir eine E-Mail mit weiteren Anweisungen an {rhrk_mail}@rhrk.uni-kl.de geschickt.")
+        await ctx.send(_("I have sent your verification code to $email.",email=rhrk_mail+'@rhrk.uni-kl.de'))
 
 
-    @commands.command(name="code",brief="Deinen Anmeldecode eingeben.")
+    @commands.command(name=_("code"),brief=_("Command to enter your authentication code."))
     async def code(self,ctx,*args):
         if len(args) == 0:
-            await ctx.send("Bitte gib einen Code an.")
+            await ctx.send(_("Missing mandatory argument: verification code."))
             return
 
         if b5('user').get(ctx.author.id) is not None and b5('user').get(ctx.author.id).get('verified'):
-            await ctx.send("Dein Account ist bereits verifiziert.")
+            await ctx.send(_("Your account is already verified."))
             return
 
         entered_code = args[0]
         try:
             u = b5('user').get(ctx.author.id)
         except KeyError:
-            await ctx.send("Etwas ist schrecklich schief gelaufen. Bitte verlasse den Server und tritt neu bei.")
+            await ctx.send(_("Database error. Please leave the server and rejoin via the invite link."))
             raise Bot5Error("code: user was None")
             return
 
         if await self.verify(u,int(entered_code)):
-            await ctx.send("Vielen Dank! Du solltest jetzt Zugriff auf den fünften Stock haben. Falls nicht, schreib eine E-Mail an fs.leo@mathematik.uni-kl.de.")
+            await ctx.send(_("Code correct. You are now verified."))
         else:
-            await ctx.send("Es tut mir sehr Leid, aber dieser Code ist falsch oder abgelaufen. Du kannst einen neuen Code anfordern, indem du mir nochmal deinen RHRK-Nutzernamen übermittelst:```\\rhrk nutzer```")
-            await ctx.send("Wenn du ganz sicher bist, dass dein Code stimmt, schreib eine E-Mail an fs.leo@mathematik.uni-kl.de.")
+            await ctx.send(_("Code incorrect or expired. Please try again."))
 
-    @commands.command(name="ersti", brief="Rufe dieses Kommando auf, wenn du Ersti bist.")
+    @commands.command(name=_("ersti"), brief=_("Command to verify as Ersti."))
     async def ersti(self,ctx, *wort):
         if b5('user').get(ctx.author.id) is not None and b5('user').get(ctx.author.id).get('verified'):
-            await ctx.send("Dein Account ist bereits verifiziert.")
+            await ctx.send("Your account is already verified.")
             return
 
         u = b5('user').get(ctx.author.id)
         if u is None:
-            await ctx.send("Etwas ist in unserem Code schief gelaufen. Bitte verlasse den Server und tritt neu bei, oder schreib eine E-Mail an fs.leo@mathematik.uni-kl.de.")
+            await ctx.send("Database error. Please leave the server and rejoin via the invite link.")
             return
 
         if len(wort) == 0:
-            await ctx.send("Willkommen in der Fachschaft Mathe! Um Spam zu vermeiden, müssen wir leider sicherstellen, dass du wirklich als Ersti eingeschrieben bist. Unser Geschäftsführer Herr Lossen hat dir eine E-Mail mit dem Betreff 'Informationen zum Studieneinstieg' geschickt. Darin sagt er:```Wir möchten Sie hiermit am Fachbereich Mathematik der TUK herzlich willkommen heißen!```Was ist das erste Wort nach diesem Absatz? Schicke mir eine Nachricht der Form ```\\ersti wort```wobei du 'wort' durch dieses Wort ersetzt, um dich zu registrieren.")
-            await ctx.send("Du hast die E-Mail nicht erhalten oder bereits gelöscht? Kein Problem, schreib einfach```\\erstihilfe```um einen Administrator zu kontaktieren, der dich von Hand freischaltet. Bitte gedulde dich in diesem Fall bis zu ein paar Stunden, weil wir das Ganze in unserer Freizeit machen und vielleicht gerade nicht am Computer sind.")
+            await ctx.send("Instructions for Ersti verification go here.")
 
         else:
             if await self.erstiVerify(u,wort[0]):
-                await ctx.send("Vielen Dank! Du solltest jetzt Zugriff zu unserem Server haben. Willkommen!")
+                await ctx.send("Code correct. You are now verified.")
             else:
-                await ctx.send("Das eingegebene Wort ist leider falsch, oder du hast bereits drei Fehlversuche. In diesem Fall kontaktiere bitte einen Administrator via```\\erstihilfe```oder unter der E-Mail-Adresse fs.leo@mathematik.uni-kl.de. Tut mir Leid, dass wir dir so viel Arbeit machen.")
+                await ctx.send("Text for failed Ersti verification goes here.")
 
-    @commands.command(name="erstihilfe", brief="Kontaktiert einen Administrator.")
+    @commands.command(name=_("erstihelp"), brief=_("Command to get help for first semesters."))
     async def erstihilfe(self,ctx):
         if b5('user').get(ctx.author.id) is not None and b5('user').get(ctx.author.id).get('verified'):
-            await ctx.send("Dein Account ist bereits verifiziert.")
+            await ctx.send(_("Your account is already verified."))
             return
 
             u = b5('user').get(ctx.author.id)
             subject = "LEOBOT: Ersti-Anfrage"
-            mailcontent = "Jemand hat den Ersti-Befehl verwendet. Folgendes weiß ich:\n"+u.show()
+            mailcontent = "Jemand hat den Erstihilfe-Befehl verwendet. Folgendes weiß ich:\n"+u.show()
             b5('email').send("fs.leo@mathematik.uni-kl.de",subject,mailcontent)
-            await ctx.send("Ich habe die Administratoren kontaktiert, damit sie dich von Hand freischalten. Das kann leider auch mal einen Tag dauern. Einer der Admins wird dich hier auf Discord kontaktieren.")
+            await ctx.send(_("An administrator will contact you regarding your verification."))
 
 
 
@@ -208,21 +202,21 @@ def setup(bot):
         pass
     global helpcommand
     global helpcommand1
-    helpcommand = commands.DefaultHelpCommand(command_attrs=dict(name="help",brief="Hilfe anzeigen."),verify_checks=False)
-    helpcommand1 = commands.DefaultHelpCommand(command_attrs=dict(name="hilfe",brief="Hilfe anzeigen."),verify_checks=False)
+    helpcommand = commands.DefaultHelpCommand(command_attrs=dict(name=_("help"),brief=_("Show help.")),verify_checks=False)
+    helpcommand1 = commands.DefaultHelpCommand(command_attrs=dict(name=_("help command two"),brief=_("Show help.")),verify_checks=False)
     #helpcommand2 = commands.DefaultHelpCommand(command_attrs=dict(name="leo",brief="Hilfe anzeigen."))
     helpcommand._add_to_bot(bot)
     helpcommand1._add_to_bot(bot)
     #helpcommand2._add_to_bot(bot)
 
     # allow unverified users to verify:
-    b5('ext').whitelistCommand('Registrierung','rhrk')
-    b5('ext').whitelistCommand('Registrierung','ersti')
-    b5('ext').whitelistCommand('Registrierung','code')
-    b5('ext').whitelistCommand('Registrierung','erstihilfe')
+    b5('ext').whitelistCommand('Registrierung',_('rhrk'))
+    b5('ext').whitelistCommand('Registrierung',_('ersti'))
+    b5('ext').whitelistCommand('Registrierung',_('code'))
+    b5('ext').whitelistCommand('Registrierung',_('erstihelp'))
 
-    b5('ext').whitelistCommand(None,'help')
-    b5('ext').whitelistCommand(None,'hilfe')
+    b5('ext').whitelistCommand(None,_("help"))
+    b5('ext').whitelistCommand(None,_("help command two"))
 
     b5('ext').register('auth',a)
 
@@ -237,12 +231,12 @@ def setup(bot):
 
 def teardown(bot):
     # remove whitelisted commands
-    b5('ext').unwhitelistCommand('Registrierung','rhrk')
-    b5('ext').unwhitelistCommand('Registrierung','ersti')
-    b5('ext').unwhitelistCommand('Registrierung','code')
-    b5('ext').unwhitelistCommand('Registrierung','erstihilfe')
-    b5('ext').unwhitelistCommand(None,'help')
-    b5('ext').unwhitelistCommand(None,'hilfe')
+    b5('ext').unwhitelistCommand('Registrierung',_('rhrk'))
+    b5('ext').unwhitelistCommand('Registrierung',_('ersti'))
+    b5('ext').unwhitelistCommand('Registrierung',_('code'))
+    b5('ext').unwhitelistCommand('Registrierung',_('erstihelp'))
+    b5('ext').unwhitelistCommand(None,_("help"))
+    b5('ext').unwhitelistCommand(None,_("help command two"))
 
     b5('ext').unregister('auth')
     
