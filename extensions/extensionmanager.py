@@ -137,7 +137,10 @@ class ExtensionManager(commands.Cog):
             print("EXTENSION MANAGER: tried to unwhitelist '"+name+"', but was not whitelisted in the first place")
 
     def get(self,identifier):
-        return self.vars[identifier]
+        if identifier in self.vars:
+            return self.vars[identifier]
+        else:
+            return None
 
     # returns a function to which you pass a templated string and keyworded substitutions and which returns a string.
     def _(self, extension: str):
