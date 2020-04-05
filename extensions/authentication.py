@@ -25,7 +25,6 @@ AUTH_TIMEOUT = 60*60
 
 Account = Enum('Account','TUK ERSTI GUEST UNVERIFIED')
 
-print("setting up translations")
 _ = b5('ext')._('authentication')
 
 
