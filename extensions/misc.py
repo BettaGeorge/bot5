@@ -55,4 +55,4 @@ def setup(bot):
     bot.add_cog(Misc(bot))
 
 def teardown(bot):
-    bot.remove_cog('Verschiedenes')
+    bot.remove_cog(_('Miscellaneous'))
