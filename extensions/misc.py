@@ -12,7 +12,7 @@ import re
 re_command = re.compile('^\\\\')
 
 
-class Misc(commands.Cog, name="Verschiedenes"):
+class Misc(commands.Cog, name=_("Miscellaneous")):
     def __init__(self,bot):
         self.bot = bot
 
@@ -36,16 +36,16 @@ class Misc(commands.Cog, name="Verschiedenes"):
         #await self.bot.process_commands(message)
 
 
-    @commands.command(name="echo",brief="Lass Leo etwas sagen.", description='Beispiel: \\echo "Du bist wunderbar." lässt Leo dir positive Rückmeldung geben.')
-    async def b5echo(self,ctx,*,arg="Hallo!"):
+    @commands.command(name=_("echo"),brief=_("Echoes your input."), description=_('Without an argument, says "hello". With an argument, echoes that argument.'))
+    async def b5echo(self,ctx,*,arg=_("Hello!")):
         await ctx.send(arg)
 
     @commands.Cog.listener()
     async def on_command_error(self,ctx,error):
         if isinstance(error, commands.CommandNotFound):
-            await ctx.send("Diesen Befehl kenne ich nicht. `\\hilfe` listet alle gültigen Befehle auf.")
+            await ctx.send("Command not found.")
         elif isinstance(error,commands.CheckFailure):
-            pass # we provide feedback to checks within the checks, so this is taken care of
+            await ctx.send("You are not authorized to use this command.")
         else:
             raise error
 

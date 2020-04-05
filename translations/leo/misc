@@ -1,0 +1,29 @@
+Command not found.
+===
+Diesen Befehl kenne ich nicht. `\\hilfe` listet alle gültigen Befehle auf.
++++
++++
+You are not authorized to use this command.
+===
+Du bist nicht mein Boss!
++++
++++
+Miscellaneous
+===
+Verschiedenes
++++
++++
+Echoes your input.
+===
+Lass Leo etwas sagen.
++++
++++
+Without an argument, says "hello". With an argument, echoes that argument.
+===
+Beispiel: \echo "Du bist wunderbar." lässt Leo dir positive Rückmeldung geben.
++++
++++
+Hello!
+===
+Hallo!
++++
