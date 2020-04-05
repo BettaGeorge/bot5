@@ -17,7 +17,12 @@ class Persist:
     # pass a filename and a reference to a pickleable object
     def save(self,filename:str,obj):
         with open(b5path+"/"+filename,'wb') as savefile:
-            pickle.dump(obj,savefile)
+            print("pickling "+filename)
+            try:
+                pickle.dump(obj,savefile)
+            except Exception as e:
+                print("exception during pickling:")
+                print(e)
 
     def load(self,filename:str):
             with open(b5path+"/"+filename,"rb") as savefile:

@@ -40,14 +40,18 @@ class Authentication(commands.Cog, name="Registrierung"):
             user,
             code: int, 
             force: bool=False, 
-            accountType=Account.TUK
+            accountType=None
             ) -> bool:
 
         if force or (user.get('authCode') > 0 and user.get('authCode')==code and time.time()<user.get('authCodeValidUntil')):
             user.set('verified',True)
             newrole = discord.utils.get(b5('ext').guild().roles,name='Studi')
             await user.inGuild().add_roles(newrole)
-            user.set('accountType',accountType)
+            if accountType is None:
+                acc = Account.TUK
+            else:
+                acc = accountType
+            user.set('accountType',acc)
             if user.get('rhrk') != '':
                 await user.inGuild().edit(nick=user.get('rhrk')+"@rhrk")
         return user.get('verified')
