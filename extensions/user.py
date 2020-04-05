@@ -16,7 +16,7 @@ T = TypeVar('T')
 
 _ = b5('ext')._('user')
 
-class UserCog(commands.Cog,name=_("User Mangement"),command_attrs=dict(hidden=True)):
+class UserCog(commands.Cog,name=_("User Management"),command_attrs=dict(hidden=True)):
 
     def __init__(self,bot):
         self.bot = bot

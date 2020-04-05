@@ -234,7 +234,6 @@ class ExtensionManager(commands.Cog):
                 trans = d[text]
             else:
                 trans = text
-            print(trans)
             t = Template(trans)
             return t.safe_substitute(**kwargs)
 
