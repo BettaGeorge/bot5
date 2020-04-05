@@ -23,7 +23,9 @@ from enum import Enum
 
 AUTH_TIMEOUT = 60*60
 
-Account = Enum('Account','TUK ERSTI GUEST UNVERIFIED')
+# Account = Enum('Account','TUK ERSTI GUEST UNVERIFIED')
+# apparently enums are utterly unpickleable. As soon as I use this, pickling always fails.
+# Can't pickle <enum 'Account'>: it's not the same object as extensions.authentication.Account
 
 _ = b5('ext')._('authentication')
 
@@ -40,18 +42,14 @@ class Authentication(commands.Cog, name="Registrierung"):
             user,
             code: int, 
             force: bool=False, 
-            accountType=None
+            accountType="TUK"
             ) -> bool:
 
         if force or (user.get('authCode') > 0 and user.get('authCode')==code and time.time()<user.get('authCodeValidUntil')):
             user.set('verified',True)
             newrole = discord.utils.get(b5('ext').guild().roles,name='Studi')
             await user.inGuild().add_roles(newrole)
-            if accountType is None:
-                acc = Account.TUK
-            else:
-                acc = accountType
-            user.set('accountType',acc)
+            user.set('accountType',accountType)
             if user.get('rhrk') != '':
                 await user.inGuild().edit(nick=user.get('rhrk')+"@rhrk")
         return user.get('verified')
@@ -65,7 +63,7 @@ class Authentication(commands.Cog, name="Registrierung"):
             return False
         newrole = discord.utils.get(b5('ext').guild().roles,name="Ersti")
         await user.inGuild().add_roles(newrole)
-        return await self.verify(user,0,True,Account.ERSTI)
+        return await self.verify(user,0,True,"ERSTI")
 
     def generateAuthCode(self, user, timeout: float=60*60):
         user.set('authCode',randint(1,10000))
@@ -226,7 +224,7 @@ def setup(bot):
     b5('user').registerField('auth','verified',bool,False)
     b5('user').registerField('auth','authCode',int,0)
     b5('user').registerField('auth','authCodeValidUntil',float,0.0)
-    b5('user').registerField('auth','accountType',Account,Account.UNVERIFIED)
+    b5('user').registerField('auth','accountType',str,"UNVERIFIED")
     b5('user').registerField('auth','rhrk',str,'')
 
 

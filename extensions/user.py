@@ -85,7 +85,7 @@ class UserCog(commands.Cog,name=_("User Management"),command_attrs=dict(hidden=T
             if u is None:
                 await ctx.send(_("User $displayname not found.",displayname=m.display_name))
             else:
-                await b5('auth').verify(u,0,force=True,accountType=Account.GUEST)
+                await b5('auth').verify(u,0,force=True,accountType="GUEST")
                 await ctx.send(_("User $displayname is now verified.",displayname=u.inGuild().display_name))
 
     @user.command(name=_("know"),brief=_("Add user to database."))
