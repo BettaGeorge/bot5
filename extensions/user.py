@@ -14,6 +14,8 @@ import os
 # type hinting classes needs type vars:
 T = TypeVar('T')
 
+_ = b5('ext')._('user')
+
 class UserCog(commands.Cog,name=_("User Mangement"),command_attrs=dict(hidden=True)):
 
     def __init__(self,bot):

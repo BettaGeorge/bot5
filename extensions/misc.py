@@ -11,6 +11,7 @@ import subprocess
 import re
 re_command = re.compile('^\\\\')
 
+_ = b5('ext')._('misc')
 
 class Misc(commands.Cog, name=_("Miscellaneous")):
     def __init__(self,bot):
