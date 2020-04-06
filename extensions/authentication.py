@@ -155,22 +155,22 @@ class Authentication(commands.Cog, name="Registrierung"):
     @commands.command(name=_("ersti"), brief=_("Command to verify as Ersti."))
     async def ersti(self,ctx, *wort):
         if b5('user').get(ctx.author.id) is not None and b5('user').get(ctx.author.id).get('verified'):
-            await ctx.send("Your account is already verified.")
+            await ctx.send(_("Your account is already verified."))
             return
 
         u = b5('user').get(ctx.author.id)
         if u is None:
-            await ctx.send("Database error. Please leave the server and rejoin via the invite link.")
+            await ctx.send(_("Database error. Please leave the server and rejoin via the invite link."))
             return
 
         if len(wort) == 0:
-            await ctx.send("Instructions for Ersti verification go here.")
+            await ctx.send(_("Instructions for Ersti verification go here."))
 
         else:
             if await self.erstiVerify(u,wort[0]):
-                await ctx.send("Code correct. You are now verified.")
+                await ctx.send(_("Code correct. You are now verified."))
             else:
-                await ctx.send("Text for failed Ersti verification goes here.")
+                await ctx.send(_("Text for failed Ersti verification goes here."))
 
     @commands.command(name=_("erstihelp"), brief=_("Command to get help for first semesters."))
     async def erstihilfe(self,ctx):
