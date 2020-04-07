@@ -3,6 +3,13 @@
 # komraum.py
 # extension to manage the KOM room e.g. during board games night or breakfast.
 
+
+#----------------------------------------------------------------------------
+#"THE COFFEEWARE LICENSE":
+#Adrian Rettich (adrian.rettich@gmail.com) wrote this file. As long as you retain this notice, you can do whatever you want with this stuff. If we should meet in person some day, and you think this stuff is worth it, you are welcome to buy me a coffee in return.  
+#----------------------------------------------------------------------------
+
+
 import bot5utils
 from bot5utils import *
 from bot5utils import ext as b5

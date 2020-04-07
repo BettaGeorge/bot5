@@ -4,6 +4,13 @@
 # extension for datenschutz.
 
 
+#----------------------------------------------------------------------------
+#"THE COFFEEWARE LICENSE":
+#Adrian Rettich (adrian.rettich@gmail.com) wrote this file. As long as you retain this notice, you can do whatever you want with this stuff. If we should meet in person some day, and you think this stuff is worth it, you are welcome to buy me a coffee in return.  
+#----------------------------------------------------------------------------
+
+
+
 from discord.ext import commands
 
 from bot5utils import *

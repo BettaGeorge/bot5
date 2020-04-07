@@ -6,6 +6,13 @@
 # * custom exception classes
 # * custom checks for the discord.command framework
 
+#----------------------------------------------------------------------------
+#"THE COFFEEWARE LICENSE":
+#Adrian Rettich (adrian.rettich@gmail.com) wrote this file. As long as you retain this notice, you can do whatever you want with this stuff. If we should meet in person some day, and you think this stuff is worth it, you are welcome to buy me a coffee in return.  
+#----------------------------------------------------------------------------
+
+
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import Greedy
