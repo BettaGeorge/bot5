@@ -103,8 +103,9 @@ class KOMRaum(commands.Cog,name="KOM-Raum"):
 
             try:
                 cli = await vc.connect()
-            except:
+            except Exception as e:
                 cli = None
+                print(e)
 
             audio_source = discord.FFmpegPCMAudio(b5path+'/extensiondata/komraum/coffee.mp3')
             if cli is not None and not cli.is_playing():
