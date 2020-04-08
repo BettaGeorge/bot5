@@ -90,7 +90,7 @@ class KOMRaum(commands.Cog,name="KOM-Raum"):
     async def coffee(self,ctx):
         ch = ctx.message.author.voice.voice_channel
         if ch is not None:
-            if ch = discord.utils.get(bot5utils.GUILD().voice_channels,name="an der Kaffeemaschine"):
+            if ch == discord.utils.get(bot5utils.GUILD().voice_channels,name="an der Kaffeemaschine"):
                 await ctx.send("\N{HOT BEVERAGE}")
                 return
         await ctx.send("Du musst an die Kaffeemaschine gehen.")
