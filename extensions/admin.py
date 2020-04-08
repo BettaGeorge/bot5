@@ -53,6 +53,16 @@ class System(commands.Cog,command_attrs=dict(hidden=True)):
         else:
             await b5('log').log("reload "+ext+": success")
 
+    @extension.command(name="forceunload")
+    @b5check("user",check="admin")
+    async def b5forceunload(self,ctx,ext):
+        try:
+            b5('ext').unloadExtension(ext,force=True)
+        except Exception as e:
+            await b5('log').log("unload "+ext+": exception\n"+str(e))
+        else:
+            await b5('log').log("unload "+ext+": success")
+
 
     @commands.command(name="shoo",brief="Leo schlafen schicken. Nur Adrian kann ihn dann neu starten.")
     @b5check("user",check="admin")
