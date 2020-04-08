@@ -88,7 +88,7 @@ class KOMRaum(commands.Cog,name="KOM-Raum"):
 
     @commands.command(name="kaffee",brief="Eine Tasse Kaffee machen.")
     async def coffee(self,ctx):
-        if b5('user').get(ctx.author.id).inGuild() in discord.utils.get(bot5utils.GUILD().voice_channels,name="an der Kaffeemaschine").voice_members:
+        if b5('user').get(ctx.author.id).inGuild() in discord.utils.get(bot5utils.guild().voice_channels,name="an der Kaffeemaschine").voice_members:
             await ctx.send("\N{HOT BEVERAGE}")
             return
         await ctx.send("Du musst an die Kaffeemaschine gehen.")
