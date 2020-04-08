@@ -15,6 +15,7 @@ from bot5utils import *
 from bot5utils import ext as b5
 
 import time
+import asyncio
 
 
 class KOMRaum(commands.Cog,name="KOM-Raum"):
@@ -90,10 +91,29 @@ class KOMRaum(commands.Cog,name="KOM-Raum"):
 
     @commands.command(name="kaffee",brief="Eine Tasse Kaffee machen.")
     async def coffee(self,ctx):
-        if b5('user').get(ctx.author.id).inGuild() in discord.utils.get(b5('ext').guild().voice_channels,name="an der Kaffeemaschine").members:
-            await ctx.send('Pssshhhhh...')
-            time.sleep(20)
-            await ctx.send("\N{HOT BEVERAGE}")
+        def finish(exception):
+            async def f():
+                await ctx.send("\N{HOT BEVERAGE}")
+                await cli.disconnect()
+            future = asyncio.run_coroutine_threadsafe(f(),self.bot.loop)
+        vc = discord.utils.get(b5('ext').guild().voice_channels,name="an der Kaffeemaschine")
+        if b5('user').get(ctx.author.id).inGuild() in vc.members:
+            if not discord.opus.is_loaded():
+                discord.opus.load_opus("libopus.so.0")
+
+            try:
+                cli = await vc.connect()
+            except:
+                cli = None
+
+            audio_source = discord.FFmpegPCMAudio(b5path+'/extensiondata/komraum/coffee.mp3')
+            if cli is not None and not cli.is_playing():
+                cli.play(audio_source, after=finish)
+            else:
+                await ctx.send("Du musst warten, bis die Person vor dir ihren Kaffee hat.")
+            #await cli.disconnect()
+
+            #time.sleep(20)
             return
         await ctx.send("Du musst an die Kaffeemaschine gehen.")
 
