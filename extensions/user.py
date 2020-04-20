@@ -174,7 +174,7 @@ class UserBase:
     def list(self):
         return [self.users[u] for u in self.users]
 
-    def registerField(self, extension: str, name: str, t: T, default: Type[T]) -> None:
+    def registerField(self, extension: str, name: str, t: T, default: Type[T], showToUser: bool=True) -> None:
         if name in self.fields:
             if self.fields[name].extension == extension:
                 # the extension has been loaded before, not to worry
@@ -182,7 +182,7 @@ class UserBase:
             else:
                 raise Bot5Error("field "+name+" already registered by extension "+self.fields[name].extension)
 
-        self.fields[name] = UserField(extension,t,default)
+        self.fields[name] = UserField(extension,t,default,showToUser)
 
     def getField(self, user: int, name: str):
         if name not in self.fields:
