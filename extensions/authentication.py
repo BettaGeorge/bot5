@@ -230,7 +230,7 @@ def setup(bot):
     b5('ext').register('auth',a)
 
     b5('user').registerField('auth','verified',bool,False)
-    b5('user').registerField('auth','authCode',int,0)
+    b5('user').registerField('auth','authCode',int,0,showToUser=False)
     b5('user').registerField('auth','authCodeValidUntil',float,0.0)
     b5('user').registerField('auth','accountType',str,"UNVERIFIED")
     b5('user').registerField('auth','rhrk',str,'')
