@@ -1,3 +1,12 @@
+This project has given up GitHub.  ([See Software Freedom Conservancy's *Give Up  GitHub* site for details](https://GiveUpGitHub.org).)
+
+You can now find this project at [https://codeberg.org/BettaGeorge/bot5.git](https://codeberg.org/BettaGeorge/bot5.git) instead.
+
+Any use of this project's code by GitHub Copilot, past or present, is done without my permission.  I do not consent to GitHub's use of this project's code in Copilot.
+
+I strongly encourage anyone who cares about free software to leave GitHub. See the link at the top for reasons and alternative hosting services.
+
+
 To start up the bot, switch into this directory and run
 python3 bot5.py /path/to/config
 with the path to a (possibly not yet existing) folder where you would like
